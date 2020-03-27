@@ -16,8 +16,7 @@ locals {
 }
 
 module "k8s_yaml_tf" {
-  source = "github.com/brcnblc/k8s-terraform-yaml" 
-
+  #source = "github.com/brcnblc/k8s-terraform-yaml" 
+  source = "../.."
   appConfig = local.appConfig
-  module_enabled=true
 }
