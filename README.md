@@ -237,14 +237,14 @@ output = {
 ```
 
 Note that the above output includes 4 deployments for 2 applications. 
- * my-app
+ * sec-app
     - deployment
     - service - LoadBalancer
- * sec-app
+ * my-app
     - deployment
     - service - NodePort
 
-__my-app__ also includes a Load Balancer service which exposes the application to internet. In this case it creates an AWS ELB.
+__sec-app__ also includes a Load Balancer service which exposes the application to internet. In this case it creates an AWS ELB.
 
 The configuration file for the above deployment is a json file located in the root folder. `app.auto.tfvar.json`. As you may already know when you put json extension terraform interprets these files as JSON.  Please keep the same structure when you prepare your configuration. Such as:
 
