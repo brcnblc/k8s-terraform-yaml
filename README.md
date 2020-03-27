@@ -301,6 +301,52 @@ Below application-1 deployment section is disabled, app-2 completely disabled, s
 ```
 ------
 
+### Explicit Dependency ###
+
+Module has a inbuilt dependency object. You can use module_depends_on parameter to assign explicit dependecies. 
+
+Eg:
+
+```terraform
+module "k8s_yaml_tf" {
+  source = "github.com/brcnblc/k8s-terraform-yaml" 
+
+  appConfig = var.appConfig
+  module_depends_on = [aws_eks]
+}
+```
+
+### Disabling Resources ###
+
+Resource creation can be disabled by module_enabled parameter. You may pass this parameter either inline through module definition or json variable file.
+
+Eg:
+
+```terraform
+module "k8s_yaml_tf" {
+  source = "github.com/brcnblc/k8s-terraform-yaml" 
+
+  appConfig = var.appConfig
+  module_depends_on = [aws_eks]
+  module_enabled = false
+}
+```
+ OR using JSON configuration file:
+
+```json
+{ "module_enabled": false,
+  "appConfig": {
+    "application-1":{
+      }
+    },
+    "app-2":{
+    }
+  }
+}
+```
+
+Note that disabling module destroys all deployment controllers along with child pods, services, etc... which are installed by the module. Other applications which are not installed by the module will not be affected.
+
 ### Further Reading ###
 
 Following names are valid for configuration_field_name:
