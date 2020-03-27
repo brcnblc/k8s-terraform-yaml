@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: terraform
+  labels:
+    test: MyExampleApp
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      test: MyExampleApp
+  
+  template:
+    metadata:
+      labels:
+        test: MyExampleApp
+    
+    spec:
+      containers:
+      - name: example
+        image: 277341187485.dkr.ecr.eu-central-1.amazonaws.com/sample-app:latest
+        ports:
+        - containerPort: 3000
+        
