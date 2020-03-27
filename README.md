@@ -20,7 +20,7 @@ See https://www.terraform.io/intro/index.html for more information.
 
 ### Prerequisites ###
 
-* Pre-configured, running and locally accesible  kubernetes cluster. See [AWS EKS](https://aws.amazon.com/eks/)
+* Pre-configured, running and locally accessible  kubernetes cluster. See [AWS EKS](https://aws.amazon.com/eks/)
 * [Terraform Installation](https://www.terraform.io/downloads.html) , version >= 0.12
 
 
@@ -66,7 +66,7 @@ module "k8s_yaml_tf" {
 
 ### Example Usage with [JSON](https://www.json.org/) Configuration file ###
 
-Create `app.auto.tfvar.json` in your terraform project. You can rename app. part but keep the rest of it. Such as `my-app.auto.tfvar.jso`or `config-auto.tfvar.json`
+Create `app.auto.tfvar.json` in your terraform project. You can rename app. part but keep the rest of it. Such as `my-app.auto.tfvar.json`or `config-auto.tfvar.json`
 
 See: [app.auto.tfvar.json](https://github.com/brcnblc/k8s-terraform-yaml/blob/master/app.auto.tfvars.json) for full example configuration file.
 
@@ -106,8 +106,6 @@ module "k8s_yaml_tf" {
   appConfig = var.appConfig
 }
 ```
-
-Thats it. 
 
 Run:
 
