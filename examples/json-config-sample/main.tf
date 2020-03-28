@@ -5,8 +5,6 @@ provider "kubernetes" {
 
 
 module "k8s_yaml_tf" {
-  #source = "github.com/brcnblc/k8s-terraform-yaml" 
-  source = "../.." # Use above source in your project
-
+  source = "github.com/brcnblc/k8s-terraform-yaml" 
   appConfig = var.appConfig
 }

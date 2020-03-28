@@ -15,7 +15,7 @@ See https://www.terraform.io/intro/index.html for more information.
 
   This module makes [Terraform](https://www.terraform.io/) possible to use YAML or JSON files as a source for every resource that is provided by official [Kubernetes provider](https://www.terraform.io/docs/providers/kubernetes/).
 
-![Terraform-Yaml-Kubernetes Diagram](k8s-terraform-yaml-diagram.png)
+![Terraform-Yaml-Kubernetes Diagram](images/k8s-terraform-yaml-diagram.png)
 
 
 ### Prerequisites ###

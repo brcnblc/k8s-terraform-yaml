@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  generateName: terraform-
+  name: terraform
   labels:
     test: MyExampleApp
 
@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: example
-        image: bircan/sample-app
+        image: 277341187485.dkr.ecr.eu-central-1.amazonaws.com/sample-app:latest
         ports:
         - containerPort: 3000
         
