@@ -5,12 +5,12 @@ provider "kubernetes" {
 locals {
   appConfig = merge (
     {
-        test-app = {
-          k8s = {
-            deployment = yamldecode(file("deployment.yml"))
-            service = yamldecode(file("service.yml"))
-          }
-        } 
+      test-app = {
+        k8s = {
+          deployment = yamldecode(file("deployment.yml"))
+          service = yamldecode(file("service.yml"))
+        }
+      } 
     }
   )
 }

@@ -15,5 +15,6 @@ module "k8s_yaml_tf" {
   source = "github.com/brcnblc/k8s-terraform-yaml" 
   module_depends_on = [module.eks]
   appConfig = var.appConfig
+  module_enabled = var.cluster.deployments.applications.enabled
 }
 
