@@ -56,7 +56,7 @@ resource "kubernetes_cluster_role_binding" "instance" {
       # Type: string Required    
       # The name of the resource to bind to.
 
-      namespace = lookup(subject.value, "namespace", null)
+      namespace = var.namespace != "" ? var.namespace : lookup(subject.value, "namespace", null)
       # Type: string   Optional  
       # The Namespace of the subject resource.
 

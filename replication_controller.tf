@@ -22,7 +22,7 @@ resource "kubernetes_replication_controller" "instance" {
       # Type: string   Optional Computed 
       # Name of the replication controller, must be unique. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
-      namespace = lookup(metadata.value, "namespace", null)
+      namespace = var.namespace != "" ? var.namespace : lookup(metadata.value, "namespace", null)
       # Type: string   Optional  
       # Namespace defines the space within which name of the replication controller must be unique.
 
@@ -1939,7 +1939,7 @@ resource "kubernetes_replication_controller" "instance" {
               # Type: string   Optional Computed 
               # Name of the replication controller's template, must be unique. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
-              namespace = lookup(metadata.value, "namespace", null)
+              namespace = var.namespace != "" ? var.namespace : lookup(metadata.value, "namespace", null)
               # Type: string   Optional  
               # Namespace defines the space within which name of the replication controller's template must be unique.
 

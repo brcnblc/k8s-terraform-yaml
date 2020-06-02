@@ -18,7 +18,7 @@ resource "kubernetes_role_binding" "instance" {
       # Type: string   Optional Computed 
       # Name of the roleBinding, must be unique. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
-      namespace = lookup(metadata.value, "namespace", null)
+      namespace = var.namespace != "" ? var.namespace : lookup(metadata.value, "namespace", null)
       # Type: string   Optional  
       # Namespace defines the space within which name of the roleBinding must be unique.
 
@@ -60,7 +60,7 @@ resource "kubernetes_role_binding" "instance" {
       # Type: string Required    
       # The name of the resource to bind to.
 
-      namespace = lookup(subject.value, "namespace", null)
+      namespace = var.namespace != "" ? var.namespace : lookup(subject.value, "namespace", null)
       # Type: string   Optional  
       # The Namespace of the subject resource.
 

@@ -102,7 +102,10 @@ def process_block(data, parent='each', file_name='', plural_exceptions=[], compu
       if not computed or discard_computed or optional or required:
         if key == "id":continue
         txt = ""
-        txt += ( level * tab ) + f'{key} = lookup({parent}.value, "{convert_to_camel_case(key)}", null)' + f'\n' 
+        if key != "namespace":
+          txt += ( level * tab ) + f'{key} = lookup({parent}.value, "{convert_to_camel_case(key)}", null)' + f'\n' 
+        else:
+          txt += ( level * tab ) + f'{key} = var.namespace != "" ? var.namespace : lookup({parent}.value, "{convert_to_camel_case(key)}", null)' + f'\n' 
         txt += ( level * tab ) + f'# Type: {type} {"Required" if required else ""}  {"Optional" if optional else ""} {"Computed" if computed else ""} {"Sensitive" if sensitive else ""}' + f'\n' 
         if description:
           txt += ( level * tab ) + f'# {description}' + f'\n'

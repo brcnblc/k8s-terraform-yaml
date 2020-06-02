@@ -22,7 +22,7 @@ resource "kubernetes_service" "instance" {
       # Type: string   Optional Computed 
       # Name of the service, must be unique. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
-      namespace = lookup(metadata.value, "namespace", null)
+      namespace = var.namespace != "" ? var.namespace : lookup(metadata.value, "namespace", null)
       # Type: string   Optional  
       # Namespace defines the space within which name of the service must be unique.
 

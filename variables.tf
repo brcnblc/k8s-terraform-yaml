@@ -3,3 +3,9 @@ variable "appConfig" {
   type = any
   default = {}
 }
+
+variable "namespace" {
+  description = "Namespace to apply"
+  type = string
+  default = ""
+}

@@ -22,7 +22,7 @@ resource "kubernetes_deployment" "instance" {
       # Type: string   Optional Computed 
       # Name of the deployment, must be unique. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
-      namespace = lookup(metadata.value, "namespace", null)
+      namespace = var.namespace != "" ? var.namespace : lookup(metadata.value, "namespace", null)
       # Type: string   Optional  
       # Namespace defines the space within which name of the deployment must be unique.
 
@@ -133,7 +133,7 @@ resource "kubernetes_deployment" "instance" {
               # Type: string   Optional Computed 
               # Name of the pod, must be unique. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
-              namespace = lookup(metadata.value, "namespace", null)
+              namespace = var.namespace != "" ? var.namespace : lookup(metadata.value, "namespace", null)
               # Type: string   Optional  
               # Namespace defines the space within which name of the pod must be unique.
 
