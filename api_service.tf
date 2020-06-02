@@ -61,7 +61,7 @@ resource "kubernetes_api_service" "instance" {
           # Type: string Required    
           # Name is the name of the service.
 
-          namespace = lookup(service.value, "namespace", null)
+          namespace = var.namespace != "" ? var.namespace : lookup(service.value, "namespace", null)
           # Type: string Required    
           # Namespace is the namespace of the service.
 
