@@ -281,7 +281,7 @@ process_json(
   filter = [],
   debug = False,
   verbose = 1,
-  long_out = False
+  long_out = True
   )
 
 
