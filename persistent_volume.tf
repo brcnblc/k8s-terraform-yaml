@@ -58,7 +58,7 @@ resource "kubernetes_persistent_volume" "instance" {
 
                 content {
                   dynamic "match_expressions" { # Nesting Mode: list  
-                    for_each = lookup(node_selector_term.value, "matchExpressionss", {})
+                    for_each = lookup(node_selector_term.value, "matchExpressions", {})
 
                     content {
                       key = lookup(match_expressions.value, "key", null)
@@ -77,7 +77,7 @@ resource "kubernetes_persistent_volume" "instance" {
                   }
 
                   dynamic "match_fields" { # Nesting Mode: list  
-                    for_each = lookup(node_selector_term.value, "matchFieldss", {})
+                    for_each = lookup(node_selector_term.value, "matchFields", {})
 
                     content {
                       key = lookup(match_fields.value, "key", null)

@@ -2,11 +2,11 @@ import json
 
 # Globals
 plural_exception_definitions = {
-  "deployment": ["env","env_from"]
+  "global":["env","env_from"]
 }
 
 computed_exception_definitions = {
-  "deployment": ["container.resources.limits","container.resources.requests"]
+  "global": ["container.resources.limits","container.resources.requests"]
 }
 
 tab = ' ' * 2
@@ -146,7 +146,7 @@ def process_block(data, parent='each', file_name='', plural_exceptions=[], compu
       level += 1
 
       if nesting_mode == "list" and not max_items:
-        txt +=  (level * tab) + f'for_each = lookup({parent}.value, "{convert_to_camel_case(key)}{"s" if key not in plural_exceptions else ""}", {{}})' + f'\n'
+        txt +=  (level * tab) + f'for_each = lookup({parent}.value, "{convert_to_camel_case(key)}{"s" if key not in plural_exceptions and key[-1] != "s" else ""}", {{}})' + f'\n'
       else:
         txt +=  (level * tab) + f'for_each = contains(keys({parent}.value), "{convert_to_camel_case(key)}") ? {{item = {parent}.value["{convert_to_camel_case(key)}"]}} : {{}}' + f'\n'
       
@@ -229,12 +229,22 @@ def process_json(json_file = 'provider.json', filter=[], debug=False, verbose=1,
     if verbose > 0:
       print (f'Processing {resource_name}...\n')
 
+    # Plural Exceptions
+    global_plural_exceptions = plural_exception_definitions["global"] if "global" in plural_exception_definitions else []
+    local_plural_exceptions = plural_exception_definitions[resource_short_name] if resource_short_name in plural_exception_definitions else []
+    plural_exceptions = global_plural_exceptions + local_plural_exceptions
+
+    # Computed Exceptions
+    global_computed_exceptions = computed_exception_definitions["global"] if "global" in computed_exception_definitions else []
+    local_computed_exceptions = computed_exception_definitions[resource_short_name] if resource_short_name in computed_exception_definitions else []
+    computed_exceptions = global_computed_exceptions + local_computed_exceptions
+    
     process_block(
       data= resource_schema, 
       parent= 'each', 
       file_name = output_file, 
-      plural_exceptions = plural_exception_definitions[resource_short_name] if resource_short_name in plural_exception_definitions else [],
-      computed_exceptions = computed_exception_definitions[resource_short_name] if resource_short_name in computed_exception_definitions else [],
+      plural_exceptions = plural_exceptions,
+      computed_exceptions = computed_exceptions,
       objpath = "", 
       debug = debug,
       verbose = verbose,

@@ -38,11 +38,11 @@ resource "kubernetes_network_policy" "instance" {
       # List of rule types that the NetworkPolicy relates to. Valid options are "Ingress", "Egress", or "Ingress,Egress". If this field is not specified, it will default based on the existence of Ingress or Egress rules; policies that contain an Egress section are assumed to affect Egress, and all policies (whether or not they contain an Ingress section) are assumed to affect Ingress. If you want to write an egress-only policy, you must explicitly specify policyTypes [ "Egress" ]. Likewise, if you want to write a policy that specifies that no egress is allowed, you must specify a policyTypes value that include "Egress" (since such a policy would not include an Egress section and would otherwise default to just [ "Ingress" ]). This field is beta-level in 1.8
 
       dynamic "egress" { # Nesting Mode: list  
-        for_each = lookup(spec.value, "egresss", {})
+        for_each = lookup(spec.value, "egress", {})
 
         content {
           dynamic "ports" { # Nesting Mode: list  
-            for_each = lookup(egress.value, "portss", {})
+            for_each = lookup(egress.value, "ports", {})
 
             content {
               port = lookup(ports.value, "port", null)
@@ -84,7 +84,7 @@ resource "kubernetes_network_policy" "instance" {
                   # A map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of `match_expressions`, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
 
                   dynamic "match_expressions" { # Nesting Mode: list  
-                    for_each = lookup(namespace_selector.value, "matchExpressionss", {})
+                    for_each = lookup(namespace_selector.value, "matchExpressions", {})
 
                     content {
                       key = lookup(match_expressions.value, "key", null)
@@ -114,7 +114,7 @@ resource "kubernetes_network_policy" "instance" {
                   # A map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of `match_expressions`, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
 
                   dynamic "match_expressions" { # Nesting Mode: list  
-                    for_each = lookup(pod_selector.value, "matchExpressionss", {})
+                    for_each = lookup(pod_selector.value, "matchExpressions", {})
 
                     content {
                       key = lookup(match_expressions.value, "key", null)
@@ -142,7 +142,7 @@ resource "kubernetes_network_policy" "instance" {
       }
 
       dynamic "ingress" { # Nesting Mode: list  
-        for_each = lookup(spec.value, "ingresss", {})
+        for_each = lookup(spec.value, "ingress", {})
 
         content {
           dynamic "from" { # Nesting Mode: list  
@@ -173,7 +173,7 @@ resource "kubernetes_network_policy" "instance" {
                   # A map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of `match_expressions`, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
 
                   dynamic "match_expressions" { # Nesting Mode: list  
-                    for_each = lookup(namespace_selector.value, "matchExpressionss", {})
+                    for_each = lookup(namespace_selector.value, "matchExpressions", {})
 
                     content {
                       key = lookup(match_expressions.value, "key", null)
@@ -203,7 +203,7 @@ resource "kubernetes_network_policy" "instance" {
                   # A map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of `match_expressions`, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
 
                   dynamic "match_expressions" { # Nesting Mode: list  
-                    for_each = lookup(pod_selector.value, "matchExpressionss", {})
+                    for_each = lookup(pod_selector.value, "matchExpressions", {})
 
                     content {
                       key = lookup(match_expressions.value, "key", null)
@@ -228,7 +228,7 @@ resource "kubernetes_network_policy" "instance" {
           }
 
           dynamic "ports" { # Nesting Mode: list  
-            for_each = lookup(ingress.value, "portss", {})
+            for_each = lookup(ingress.value, "ports", {})
 
             content {
               port = lookup(ports.value, "port", null)
@@ -254,7 +254,7 @@ resource "kubernetes_network_policy" "instance" {
           # A map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of `match_expressions`, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
 
           dynamic "match_expressions" { # Nesting Mode: list  
-            for_each = lookup(pod_selector.value, "matchExpressionss", {})
+            for_each = lookup(pod_selector.value, "matchExpressions", {})
 
             content {
               key = lookup(match_expressions.value, "key", null)

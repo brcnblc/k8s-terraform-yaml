@@ -48,7 +48,7 @@ resource "kubernetes_pod_disruption_budget" "instance" {
           # A map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of `match_expressions`, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
 
           dynamic "match_expressions" { # Nesting Mode: list  
-            for_each = lookup(selector.value, "matchExpressionss", {})
+            for_each = lookup(selector.value, "matchExpressions", {})
 
             content {
               key = lookup(match_expressions.value, "key", null)

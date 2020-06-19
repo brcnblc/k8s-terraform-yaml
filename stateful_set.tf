@@ -58,7 +58,7 @@ resource "kubernetes_stateful_set" "instance" {
           # A map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of `match_expressions`, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
 
           dynamic "match_expressions" { # Nesting Mode: list  
-            for_each = lookup(selector.value, "matchExpressionss", {})
+            for_each = lookup(selector.value, "matchExpressions", {})
 
             content {
               key = lookup(match_expressions.value, "key", null)
@@ -191,7 +191,7 @@ resource "kubernetes_stateful_set" "instance" {
 
                             content {
                               dynamic "match_expressions" { # Nesting Mode: list  
-                                for_each = lookup(preference.value, "matchExpressionss", {})
+                                for_each = lookup(preference.value, "matchExpressions", {})
 
                                 content {
                                   key = lookup(match_expressions.value, "key", null)
@@ -224,7 +224,7 @@ resource "kubernetes_stateful_set" "instance" {
 
                             content {
                               dynamic "match_expressions" { # Nesting Mode: list  
-                                for_each = lookup(node_selector_term.value, "matchExpressionss", {})
+                                for_each = lookup(node_selector_term.value, "matchExpressions", {})
 
                                 content {
                                   key = lookup(match_expressions.value, "key", null)
@@ -284,7 +284,7 @@ resource "kubernetes_stateful_set" "instance" {
                                   # A map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of `match_expressions`, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
 
                                   dynamic "match_expressions" { # Nesting Mode: list  
-                                    for_each = lookup(label_selector.value, "matchExpressionss", {})
+                                    for_each = lookup(label_selector.value, "matchExpressions", {})
 
                                     content {
                                       key = lookup(match_expressions.value, "key", null)
@@ -332,7 +332,7 @@ resource "kubernetes_stateful_set" "instance" {
                               # A map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of `match_expressions`, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
 
                               dynamic "match_expressions" { # Nesting Mode: list  
-                                for_each = lookup(label_selector.value, "matchExpressionss", {})
+                                for_each = lookup(label_selector.value, "matchExpressions", {})
 
                                 content {
                                   key = lookup(match_expressions.value, "key", null)
@@ -392,7 +392,7 @@ resource "kubernetes_stateful_set" "instance" {
                                   # A map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of `match_expressions`, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
 
                                   dynamic "match_expressions" { # Nesting Mode: list  
-                                    for_each = lookup(label_selector.value, "matchExpressionss", {})
+                                    for_each = lookup(label_selector.value, "matchExpressions", {})
 
                                     content {
                                       key = lookup(match_expressions.value, "key", null)
@@ -440,7 +440,7 @@ resource "kubernetes_stateful_set" "instance" {
                               # A map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of `match_expressions`, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
 
                               dynamic "match_expressions" { # Nesting Mode: list  
-                                for_each = lookup(label_selector.value, "matchExpressionss", {})
+                                for_each = lookup(label_selector.value, "matchExpressions", {})
 
                                 content {
                                   key = lookup(match_expressions.value, "key", null)
@@ -515,7 +515,7 @@ resource "kubernetes_stateful_set" "instance" {
                   # Container's working directory. If not specified, the container runtime's default will be used, which might be configured in the container image. Cannot be updated.
 
                   dynamic "env" { # Nesting Mode: list  
-                    for_each = lookup(container.value, "envs", {})
+                    for_each = lookup(container.value, "env", {})
 
                     content {
                       name = lookup(env.value, "name", null)
@@ -596,7 +596,7 @@ resource "kubernetes_stateful_set" "instance" {
                   }
 
                   dynamic "env_from" { # Nesting Mode: list  
-                    for_each = lookup(container.value, "envFroms", {})
+                    for_each = lookup(container.value, "envFrom", {})
 
                     content {
                       prefix = lookup(env_from.value, "prefix", null)
@@ -1228,7 +1228,7 @@ resource "kubernetes_stateful_set" "instance" {
               }
 
               dynamic "host_aliases" { # Nesting Mode: list  
-                for_each = lookup(spec.value, "hostAliasess", {})
+                for_each = lookup(spec.value, "hostAliases", {})
 
                 content {
                   hostnames = lookup(host_aliases.value, "hostnames", null)
@@ -1243,7 +1243,7 @@ resource "kubernetes_stateful_set" "instance" {
               }
 
               dynamic "image_pull_secrets" { # Nesting Mode: list  
-                for_each = lookup(spec.value, "imagePullSecretss", {})
+                for_each = lookup(spec.value, "imagePullSecrets", {})
 
                 content {
                   name = lookup(image_pull_secrets.value, "name", null)
@@ -1298,7 +1298,7 @@ resource "kubernetes_stateful_set" "instance" {
                   # Container's working directory. If not specified, the container runtime's default will be used, which might be configured in the container image. Cannot be updated.
 
                   dynamic "env" { # Nesting Mode: list  
-                    for_each = lookup(init_container.value, "envs", {})
+                    for_each = lookup(init_container.value, "env", {})
 
                     content {
                       name = lookup(env.value, "name", null)
@@ -1379,7 +1379,7 @@ resource "kubernetes_stateful_set" "instance" {
                   }
 
                   dynamic "env_from" { # Nesting Mode: list  
-                    for_each = lookup(init_container.value, "envFroms", {})
+                    for_each = lookup(init_container.value, "envFrom", {})
 
                     content {
                       prefix = lookup(env_from.value, "prefix", null)
@@ -2204,7 +2204,7 @@ resource "kubernetes_stateful_set" "instance" {
                       # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
                       dynamic "items" { # Nesting Mode: list  
-                        for_each = lookup(config_map.value, "itemss", {})
+                        for_each = lookup(config_map.value, "items", {})
 
                         content {
                           key = lookup(items.value, "key", null)
@@ -2234,7 +2234,7 @@ resource "kubernetes_stateful_set" "instance" {
                       # Optional: mode bits to use on created files by default. Must be a value between 0 and 0777. Defaults to 0644. Directories within the path are not affected by this setting. This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
 
                       dynamic "items" { # Nesting Mode: list  
-                        for_each = lookup(downward_api.value, "itemss", {})
+                        for_each = lookup(downward_api.value, "items", {})
 
                         content {
                           mode = lookup(items.value, "mode", null)
@@ -2623,7 +2623,7 @@ resource "kubernetes_stateful_set" "instance" {
                       # Name of the secret in the pod's namespace to use. More info: http://kubernetes.io/docs/user-guide/volumes#secrets
 
                       dynamic "items" { # Nesting Mode: list  
-                        for_each = lookup(secret.value, "itemss", {})
+                        for_each = lookup(secret.value, "items", {})
 
                         content {
                           key = lookup(items.value, "key", null)
@@ -2761,7 +2761,7 @@ resource "kubernetes_stateful_set" "instance" {
                   # A map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of `match_expressions`, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
 
                   dynamic "match_expressions" { # Nesting Mode: list  
-                    for_each = lookup(selector.value, "matchExpressionss", {})
+                    for_each = lookup(selector.value, "matchExpressions", {})
 
                     content {
                       key = lookup(match_expressions.value, "key", null)

@@ -102,7 +102,7 @@ resource "kubernetes_ingress" "instance" {
       }
 
       dynamic "tls" { # Nesting Mode: list  
-        for_each = lookup(spec.value, "tlss", {})
+        for_each = lookup(spec.value, "tls", {})
 
         content {
           hosts = lookup(tls.value, "hosts", null)
