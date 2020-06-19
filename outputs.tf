@@ -578,6 +578,27 @@ value = {
 
       } : null
 
+      mutating_webhook_configuration = contains(keys(local.mutating_webhook_configuration.applications), app) ? {
+        metadata = {
+          generation = try(kubernetes_mutating_webhook_configuration.instance[app].metadata.0.generation,null)
+          # A sequence number representing a specific generation of the desired state.
+
+          name = try(kubernetes_mutating_webhook_configuration.instance[app].metadata.0.name,null)
+          # Name of the mutating webhook configuration, must be unique. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+          resourceVersion = try(kubernetes_mutating_webhook_configuration.instance[app].metadata.0.resource_version,null)
+          # An opaque value that represents the internal version of this mutating webhook configuration that can be used by clients to determine when mutating webhook configuration has changed. Read more: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
+
+          selfLink = try(kubernetes_mutating_webhook_configuration.instance[app].metadata.0.self_link,null)
+          # A URL representing this mutating webhook configuration.
+
+          uid = try(kubernetes_mutating_webhook_configuration.instance[app].metadata.0.uid,null)
+          # The unique in time and space value for this mutating webhook configuration. More info: http://kubernetes.io/docs/user-guide/identifiers#uids
+
+        }
+
+      } : null
+
       namespace = contains(keys(local.namespace.applications), app) ? {
         metadata = {
           generation = try(kubernetes_namespace.instance[app].metadata.0.generation,null)
@@ -1282,6 +1303,27 @@ value = {
 
           uid = try(kubernetes_storage_class.instance[app].metadata.0.uid,null)
           # The unique in time and space value for this storage class. More info: http://kubernetes.io/docs/user-guide/identifiers#uids
+
+        }
+
+      } : null
+
+      validating_webhook_configuration = contains(keys(local.validating_webhook_configuration.applications), app) ? {
+        metadata = {
+          generation = try(kubernetes_validating_webhook_configuration.instance[app].metadata.0.generation,null)
+          # A sequence number representing a specific generation of the desired state.
+
+          name = try(kubernetes_validating_webhook_configuration.instance[app].metadata.0.name,null)
+          # Name of the validating webhook configuration, must be unique. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+          resourceVersion = try(kubernetes_validating_webhook_configuration.instance[app].metadata.0.resource_version,null)
+          # An opaque value that represents the internal version of this validating webhook configuration that can be used by clients to determine when validating webhook configuration has changed. Read more: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
+
+          selfLink = try(kubernetes_validating_webhook_configuration.instance[app].metadata.0.self_link,null)
+          # A URL representing this validating webhook configuration.
+
+          uid = try(kubernetes_validating_webhook_configuration.instance[app].metadata.0.uid,null)
+          # The unique in time and space value for this validating webhook configuration. More info: http://kubernetes.io/docs/user-guide/identifiers#uids
 
         }
 

@@ -361,6 +361,7 @@ Following names are valid for configuration_field_name:
   * ingress
   * job
   * limit_range
+  * mutating_webhook_configuration
   * namespace
   * network_policy
   * persistent_volume
@@ -377,6 +378,7 @@ Following names are valid for configuration_field_name:
   * service_account
   * stateful_set
   * storage_class
+  * validating_webhook_configuration
 
 See https://www.terraform.io/docs/providers/kubernetes/ for more details about each section.
 
@@ -536,6 +538,12 @@ value = {
 ```
 
 ------
+### Refreshing Library with Latest Terraform Kubernetes API ###
+
+Run:  
+`sh resfresh_library.sh`  
+To refresh the library with latest API.
+Note that you should have Python3 Installed to refresh the library
 
 ### About Python Script ###
 
@@ -545,7 +553,8 @@ You may run the script when ever you want to make a change in the tf files, loca
 
 ### How to create provider.json ###
 
-Terraform presents an inline command to create provider file. In the terminal execute the following command if you would like obtain an updated file. (This file already exists in the repository root folder)
+Terraform presents an inline command to create provider file. In the terminal execute the following command if you would like obtain an updated file. (This file already exists in the repository root folder)  
+(refresh_library.sh automatically creates it automatically)
 
 ```sh
 terraform providers schema -json > provider.json     

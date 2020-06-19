@@ -2,6 +2,10 @@ resource "kubernetes_ingress" "instance" {
   depends_on = [null_resource.module_depends_on]
   for_each = local.ingress.applications
 
+  wait_for_load_balancer = lookup(each.value, "waitForLoadBalancer", null)
+  # Type: bool   Optional  
+  # Terraform will wait for the load balancer to have at least 1 endpoint before considering the resource created.
+
   dynamic "metadata" { # Nesting Mode: list  Min Items : 1  Max Items : 1  
     for_each = contains(keys(each.value), "metadata") ? {item = each.value["metadata"]} : {}
 
@@ -54,7 +58,12 @@ resource "kubernetes_ingress" "instance" {
         content {
           host = lookup(rule.value, "host", null)
           # Type: string   Optional  
-          # Host is the fully qualified domain name of a network host, as defined by RFC 3986. Note the following deviations from the "host" part of the URI as defined in the RFC: 1. IPs are not allowed. Currently an IngressRuleValue can only apply to the IP in the Spec of the parent Ingress. 2. The : delimiter is not respected because ports are not allowed. Currently the port of an Ingress is implicitly :80 for http and :443 for https. Both these may change in the future. Incoming requests are matched against the host before the IngressRuleValue. If the host is unspecified, the Ingress routes all traffic based on the specified IngressRuleValue.
+          # Host is the fully qualified domain name of a network host, as defined by RFC 3986. Note the following deviations from the "host" part of the URI as defined in the RFC: 1. IPs are not allowed. Currently an IngressRuleValue can only apply to the
+          # 	  IP in the Spec of the parent Ingress.
+          # 2. The `:` delimiter is not respected because ports are not allowed.
+          # 	  Currently the port of an Ingress is implicitly :80 for http and
+          # 	  :443 for https.
+          # Both these may change in the future. Incoming requests are matched against the host before the IngressRuleValue. If the host is unspecified, the Ingress routes all traffic based on the specified IngressRuleValue.
 
           dynamic "http" { # Nesting Mode: list  Min Items : 1  Max Items : 1  
             for_each = contains(keys(rule.value), "http") ? {item = rule.value["http"]} : {}
@@ -66,7 +75,7 @@ resource "kubernetes_ingress" "instance" {
                 content {
                   path = lookup(path.value, "path", null)
                   # Type: string   Optional  
-                  # path.regex is an extended POSIX regex as defined by IEEE Std 1003.1, (i.e this follows the egrep/unix syntax, not the perl syntax) matched against the path of an incoming request. Currently it can contain characters disallowed from the conventional "path" part of a URL as defined by RFC 3986. Paths must begin with a '/'. If unspecified, the path defaults to a catch all sending traffic to the backend.
+                  # Path is an extended POSIX regex as defined by IEEE Std 1003.1, (i.e this follows the egrep/unix syntax, not the perl syntax) matched against the path of an incoming request. Currently it can contain characters disallowed from the conventional "path" part of a URL as defined by RFC 3986. Paths must begin with a '/'. If unspecified, the path defaults to a catch all sending traffic to the backend.
 
                   dynamic "backend" { # Nesting Mode: list  Max Items : 1  
                     for_each = contains(keys(path.value), "backend") ? {item = path.value["backend"]} : {}

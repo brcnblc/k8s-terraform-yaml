@@ -95,6 +95,14 @@ locals {
     }
   }
 
+  mutating_webhook_configuration = {
+    applications = {
+      for key, value in var.appConfig :
+        key => lookup(lookup(value, "k8s", {}), "mutating_webhook_configuration", null)
+        if contains(keys(lookup(value, "k8s", {})), "mutating_webhook_configuration") && var.module_enabled && !lookup(lookup(value, "k8s", {}), "disabled", false) && !lookup(lookup(lookup(value, "k8s", {}), "mutating_webhook_configuration", {}), "disabled", false)
+    }
+  }
+
   namespace = {
     applications = {
       for key, value in var.appConfig :
@@ -220,6 +228,14 @@ locals {
       for key, value in var.appConfig :
         key => lookup(lookup(value, "k8s", {}), "storage_class", null)
         if contains(keys(lookup(value, "k8s", {})), "storage_class") && var.module_enabled && !lookup(lookup(value, "k8s", {}), "disabled", false) && !lookup(lookup(lookup(value, "k8s", {}), "storage_class", {}), "disabled", false)
+    }
+  }
+
+  validating_webhook_configuration = {
+    applications = {
+      for key, value in var.appConfig :
+        key => lookup(lookup(value, "k8s", {}), "validating_webhook_configuration", null)
+        if contains(keys(lookup(value, "k8s", {})), "validating_webhook_configuration") && var.module_enabled && !lookup(lookup(value, "k8s", {}), "disabled", false) && !lookup(lookup(lookup(value, "k8s", {}), "validating_webhook_configuration", {}), "disabled", false)
     }
   }
 

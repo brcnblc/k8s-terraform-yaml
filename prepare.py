@@ -108,7 +108,7 @@ def process_block(data, parent='each', file_name='', plural_exceptions=[], compu
           txt += ( level * tab ) + f'{key} = var.namespace != "" ? var.namespace : lookup({parent}.value, "{convert_to_camel_case(key)}", null)' + f'\n' 
         txt += ( level * tab ) + f'# Type: {type} {"Required" if required else ""}  {"Optional" if optional else ""} {"Computed" if computed else ""} {"Sensitive" if sensitive else ""}' + f'\n' 
         if description:
-          txt += ( level * tab ) + f'# {description}' + f'\n'
+          txt += ( level * tab ) + '# ' + f'\n{( level * tab )}# '.join(description.replace("\n\n","\n").split("\n")) + f'\n'
         txt += f'\n'
         write_file(file_name, txt, 'a')
 
