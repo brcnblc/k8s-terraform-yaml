@@ -284,7 +284,7 @@ resource "kubernetes_job" "instance" {
                               # empty topology key is interpreted by the scheduler as 'all topologies'
 
                               dynamic "label_selector" { # Nesting Mode: list  
-                                for_each = lookup(pod_affinity_term.value, "labelSelector", {})
+                                for_each = contains(keys(pod_affinity_term.value), "labelSelector") ? {item = pod_affinity_term.value["labelSelector"]} : {}
 
                                 content {
                                   match_labels = lookup(label_selector.value, "matchLabels", null)
@@ -332,7 +332,7 @@ resource "kubernetes_job" "instance" {
                           # empty topology key is interpreted by the scheduler as 'all topologies'
 
                           dynamic "label_selector" { # Nesting Mode: list  
-                            for_each = lookup(required_during_scheduling_ignored_during_execution.value, "labelSelector", {})
+                            for_each = contains(keys(required_during_scheduling_ignored_during_execution.value), "labelSelector") ? {item = required_during_scheduling_ignored_during_execution.value["labelSelector"]} : {}
 
                             content {
                               match_labels = lookup(label_selector.value, "matchLabels", null)
@@ -392,7 +392,7 @@ resource "kubernetes_job" "instance" {
                               # empty topology key is interpreted by the scheduler as 'all topologies'
 
                               dynamic "label_selector" { # Nesting Mode: list  
-                                for_each = lookup(pod_affinity_term.value, "labelSelector", {})
+                                for_each = contains(keys(pod_affinity_term.value), "labelSelector") ? {item = pod_affinity_term.value["labelSelector"]} : {}
 
                                 content {
                                   match_labels = lookup(label_selector.value, "matchLabels", null)
@@ -440,7 +440,7 @@ resource "kubernetes_job" "instance" {
                           # empty topology key is interpreted by the scheduler as 'all topologies'
 
                           dynamic "label_selector" { # Nesting Mode: list  
-                            for_each = lookup(required_during_scheduling_ignored_during_execution.value, "labelSelector", {})
+                            for_each = contains(keys(required_during_scheduling_ignored_during_execution.value), "labelSelector") ? {item = required_during_scheduling_ignored_during_execution.value["labelSelector"]} : {}
 
                             content {
                               match_labels = lookup(label_selector.value, "matchLabels", null)

@@ -11,6 +11,10 @@ computed_exception_definitions = {
   "global": ["container.resources.limits","container.resources.requests"]
 }
 
+max_item_exception_definitions = {
+  "global": ["label_selector"]
+}
+
 tab = ' ' * 2
 
 # Read json
@@ -43,7 +47,7 @@ def write_file(file_name, txt, mode):
 
   return
 
-def process_block(data, parent='each', file_name='', plural_exceptions=[], computed_exceptions=[], objpath="",debug=False, verbose=2, resource_name='',resource_short_name='',long_out=False):
+def process_block(data, parent='each', file_name='', plural_exceptions=[], computed_exceptions=[], max_item_exceptions=[], objpath="",debug=False, verbose=2, resource_name='',resource_short_name='',long_out=False):
   global level
   block= nesting_mode= version= attributes= block_types= min_items= max_items= None
   
@@ -61,6 +65,7 @@ def process_block(data, parent='each', file_name='', plural_exceptions=[], compu
       file_name= file_name,
       plural_exceptions= plural_exceptions,
       computed_exceptions= computed_exceptions,
+      max_item_exceptions= max_item_exceptions,
       objpath= objpath,
       debug= debug,
       verbose= verbose,
@@ -147,7 +152,7 @@ def process_block(data, parent='each', file_name='', plural_exceptions=[], compu
       txt += (level * tab) + f'dynamic "{key}" {{' + (" # " + btxt) + f'\n'
       level += 1
 
-      if nesting_mode == "list" and not max_items:
+      if nesting_mode == "list" and not max_items and not (key in max_item_exceptions):
         txt +=  (level * tab) + f'for_each = lookup({parent}.value, "{convert_to_camel_case(key)}{"s" if key in plural_exceptions else ""}", {{}})' + f'\n'
       else:
         txt +=  (level * tab) + f'for_each = contains(keys({parent}.value), "{convert_to_camel_case(key)}") ? {{item = {parent}.value["{convert_to_camel_case(key)}"]}} : {{}}' + f'\n'
@@ -164,6 +169,7 @@ def process_block(data, parent='each', file_name='', plural_exceptions=[], compu
         file_name= file_name,
         plural_exceptions=plural_exceptions,
         computed_exceptions=computed_exceptions,
+        max_item_exceptions=max_item_exceptions,
         objpath=objpath + "." + key, 
         debug= debug, 
         verbose= verbose,
@@ -183,7 +189,7 @@ def process_block(data, parent='each', file_name='', plural_exceptions=[], compu
 
 def process_json(json_file = 'provider.json', filter=[], debug=False, verbose=1, config_var="appConfig", long_out=False):
   global level, tab
-  global plural_exception_definitions, computed_exception_definitions
+  global plural_exception_definitions, computed_exception_definitions, max_item_exception_definitions
   
   
   data = import_file(json_file)
@@ -240,6 +246,11 @@ def process_json(json_file = 'provider.json', filter=[], debug=False, verbose=1,
     global_computed_exceptions = computed_exception_definitions["global"] if "global" in computed_exception_definitions else []
     local_computed_exceptions = computed_exception_definitions[resource_short_name] if resource_short_name in computed_exception_definitions else []
     computed_exceptions = global_computed_exceptions + local_computed_exceptions
+
+    # Plural Exceptions
+    global_max_item_exceptions = max_item_exception_definitions["global"] if "global" in max_item_exception_definitions else []
+    local_max_item_exceptions = max_item_exception_definitions[resource_short_name] if resource_short_name in max_item_exception_definitions else []
+    max_item_exceptions = global_max_item_exceptions + local_max_item_exceptions
     
     process_block(
       data= resource_schema, 
@@ -247,6 +258,7 @@ def process_json(json_file = 'provider.json', filter=[], debug=False, verbose=1,
       file_name = output_file, 
       plural_exceptions = plural_exceptions,
       computed_exceptions = computed_exceptions,
+      max_item_exceptions = max_item_exceptions,
       objpath = "", 
       debug = debug,
       verbose = verbose,
