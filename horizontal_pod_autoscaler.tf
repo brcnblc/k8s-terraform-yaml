@@ -66,7 +66,7 @@ resource "kubernetes_horizontal_pod_autoscaler" "instance" {
                   # name is the name of the given metric
 
                   dynamic "selector" { # Nesting Mode: list  
-                    for_each = lookup(metric.value, "selectors", {})
+                    for_each = lookup(metric.value, "selector", {})
 
                     content {
                       match_labels = lookup(selector.value, "matchLabels", null)
@@ -156,7 +156,7 @@ resource "kubernetes_horizontal_pod_autoscaler" "instance" {
                   # name is the name of the given metric
 
                   dynamic "selector" { # Nesting Mode: list  
-                    for_each = lookup(metric.value, "selectors", {})
+                    for_each = lookup(metric.value, "selector", {})
 
                     content {
                       match_labels = lookup(selector.value, "matchLabels", null)
@@ -227,7 +227,7 @@ resource "kubernetes_horizontal_pod_autoscaler" "instance" {
                   # name is the name of the given metric
 
                   dynamic "selector" { # Nesting Mode: list  
-                    for_each = lookup(metric.value, "selectors", {})
+                    for_each = lookup(metric.value, "selector", {})
 
                     content {
                       match_labels = lookup(selector.value, "matchLabels", null)

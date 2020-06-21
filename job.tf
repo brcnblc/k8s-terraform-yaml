@@ -187,7 +187,7 @@ resource "kubernetes_job" "instance" {
 
                     content {
                       dynamic "preferred_during_scheduling_ignored_during_execution" { # Nesting Mode: list  
-                        for_each = lookup(node_affinity.value, "preferredDuringSchedulingIgnoredDuringExecutions", {})
+                        for_each = lookup(node_affinity.value, "preferredDuringSchedulingIgnoredDuringExecution", {})
 
                         content {
                           weight = lookup(preferred_during_scheduling_ignored_during_execution.value, "weight", null)
@@ -264,7 +264,7 @@ resource "kubernetes_job" "instance" {
 
                     content {
                       dynamic "preferred_during_scheduling_ignored_during_execution" { # Nesting Mode: list  
-                        for_each = lookup(pod_affinity.value, "preferredDuringSchedulingIgnoredDuringExecutions", {})
+                        for_each = lookup(pod_affinity.value, "preferredDuringSchedulingIgnoredDuringExecution", {})
 
                         content {
                           weight = lookup(preferred_during_scheduling_ignored_during_execution.value, "weight", null)
@@ -284,7 +284,7 @@ resource "kubernetes_job" "instance" {
                               # empty topology key is interpreted by the scheduler as 'all topologies'
 
                               dynamic "label_selector" { # Nesting Mode: list  
-                                for_each = lookup(pod_affinity_term.value, "labelSelectors", {})
+                                for_each = lookup(pod_affinity_term.value, "labelSelector", {})
 
                                 content {
                                   match_labels = lookup(label_selector.value, "matchLabels", null)
@@ -320,7 +320,7 @@ resource "kubernetes_job" "instance" {
                       }
 
                       dynamic "required_during_scheduling_ignored_during_execution" { # Nesting Mode: list  
-                        for_each = lookup(pod_affinity.value, "requiredDuringSchedulingIgnoredDuringExecutions", {})
+                        for_each = lookup(pod_affinity.value, "requiredDuringSchedulingIgnoredDuringExecution", {})
 
                         content {
                           namespaces = lookup(required_during_scheduling_ignored_during_execution.value, "namespaces", null)
@@ -332,7 +332,7 @@ resource "kubernetes_job" "instance" {
                           # empty topology key is interpreted by the scheduler as 'all topologies'
 
                           dynamic "label_selector" { # Nesting Mode: list  
-                            for_each = lookup(required_during_scheduling_ignored_during_execution.value, "labelSelectors", {})
+                            for_each = lookup(required_during_scheduling_ignored_during_execution.value, "labelSelector", {})
 
                             content {
                               match_labels = lookup(label_selector.value, "matchLabels", null)
@@ -372,7 +372,7 @@ resource "kubernetes_job" "instance" {
 
                     content {
                       dynamic "preferred_during_scheduling_ignored_during_execution" { # Nesting Mode: list  
-                        for_each = lookup(pod_anti_affinity.value, "preferredDuringSchedulingIgnoredDuringExecutions", {})
+                        for_each = lookup(pod_anti_affinity.value, "preferredDuringSchedulingIgnoredDuringExecution", {})
 
                         content {
                           weight = lookup(preferred_during_scheduling_ignored_during_execution.value, "weight", null)
@@ -392,7 +392,7 @@ resource "kubernetes_job" "instance" {
                               # empty topology key is interpreted by the scheduler as 'all topologies'
 
                               dynamic "label_selector" { # Nesting Mode: list  
-                                for_each = lookup(pod_affinity_term.value, "labelSelectors", {})
+                                for_each = lookup(pod_affinity_term.value, "labelSelector", {})
 
                                 content {
                                   match_labels = lookup(label_selector.value, "matchLabels", null)
@@ -428,7 +428,7 @@ resource "kubernetes_job" "instance" {
                       }
 
                       dynamic "required_during_scheduling_ignored_during_execution" { # Nesting Mode: list  
-                        for_each = lookup(pod_anti_affinity.value, "requiredDuringSchedulingIgnoredDuringExecutions", {})
+                        for_each = lookup(pod_anti_affinity.value, "requiredDuringSchedulingIgnoredDuringExecution", {})
 
                         content {
                           namespaces = lookup(required_during_scheduling_ignored_during_execution.value, "namespaces", null)
@@ -440,7 +440,7 @@ resource "kubernetes_job" "instance" {
                           # empty topology key is interpreted by the scheduler as 'all topologies'
 
                           dynamic "label_selector" { # Nesting Mode: list  
-                            for_each = lookup(required_during_scheduling_ignored_during_execution.value, "labelSelectors", {})
+                            for_each = lookup(required_during_scheduling_ignored_during_execution.value, "labelSelector", {})
 
                             content {
                               match_labels = lookup(label_selector.value, "matchLabels", null)
@@ -649,7 +649,7 @@ resource "kubernetes_job" "instance" {
 
                     content {
                       dynamic "post_start" { # Nesting Mode: list  
-                        for_each = lookup(lifecycle.value, "postStarts", {})
+                        for_each = lookup(lifecycle.value, "postStart", {})
 
                         content {
                           dynamic "exec" { # Nesting Mode: list  Max Items : 1  
@@ -702,7 +702,7 @@ resource "kubernetes_job" "instance" {
                           }
 
                           dynamic "tcp_socket" { # Nesting Mode: list  
-                            for_each = lookup(post_start.value, "tcpSockets", {})
+                            for_each = lookup(post_start.value, "tcpSocket", {})
 
                             content {
                               port = lookup(tcp_socket.value, "port", null)
@@ -716,7 +716,7 @@ resource "kubernetes_job" "instance" {
                       }
 
                       dynamic "pre_stop" { # Nesting Mode: list  
-                        for_each = lookup(lifecycle.value, "preStops", {})
+                        for_each = lookup(lifecycle.value, "preStop", {})
 
                         content {
                           dynamic "exec" { # Nesting Mode: list  Max Items : 1  
@@ -769,7 +769,7 @@ resource "kubernetes_job" "instance" {
                           }
 
                           dynamic "tcp_socket" { # Nesting Mode: list  
-                            for_each = lookup(pre_stop.value, "tcpSockets", {})
+                            for_each = lookup(pre_stop.value, "tcpSocket", {})
 
                             content {
                               port = lookup(tcp_socket.value, "port", null)
@@ -859,7 +859,7 @@ resource "kubernetes_job" "instance" {
                       }
 
                       dynamic "tcp_socket" { # Nesting Mode: list  
-                        for_each = lookup(liveness_probe.value, "tcpSockets", {})
+                        for_each = lookup(liveness_probe.value, "tcpSocket", {})
 
                         content {
                           port = lookup(tcp_socket.value, "port", null)
@@ -973,7 +973,7 @@ resource "kubernetes_job" "instance" {
                       }
 
                       dynamic "tcp_socket" { # Nesting Mode: list  
-                        for_each = lookup(readiness_probe.value, "tcpSockets", {})
+                        for_each = lookup(readiness_probe.value, "tcpSocket", {})
 
                         content {
                           port = lookup(tcp_socket.value, "port", null)
@@ -1162,7 +1162,7 @@ resource "kubernetes_job" "instance" {
                       }
 
                       dynamic "tcp_socket" { # Nesting Mode: list  
-                        for_each = lookup(startup_probe.value, "tcpSockets", {})
+                        for_each = lookup(startup_probe.value, "tcpSocket", {})
 
                         content {
                           port = lookup(tcp_socket.value, "port", null)
@@ -1432,7 +1432,7 @@ resource "kubernetes_job" "instance" {
 
                     content {
                       dynamic "post_start" { # Nesting Mode: list  
-                        for_each = lookup(lifecycle.value, "postStarts", {})
+                        for_each = lookup(lifecycle.value, "postStart", {})
 
                         content {
                           dynamic "exec" { # Nesting Mode: list  Max Items : 1  
@@ -1485,7 +1485,7 @@ resource "kubernetes_job" "instance" {
                           }
 
                           dynamic "tcp_socket" { # Nesting Mode: list  
-                            for_each = lookup(post_start.value, "tcpSockets", {})
+                            for_each = lookup(post_start.value, "tcpSocket", {})
 
                             content {
                               port = lookup(tcp_socket.value, "port", null)
@@ -1499,7 +1499,7 @@ resource "kubernetes_job" "instance" {
                       }
 
                       dynamic "pre_stop" { # Nesting Mode: list  
-                        for_each = lookup(lifecycle.value, "preStops", {})
+                        for_each = lookup(lifecycle.value, "preStop", {})
 
                         content {
                           dynamic "exec" { # Nesting Mode: list  Max Items : 1  
@@ -1552,7 +1552,7 @@ resource "kubernetes_job" "instance" {
                           }
 
                           dynamic "tcp_socket" { # Nesting Mode: list  
-                            for_each = lookup(pre_stop.value, "tcpSockets", {})
+                            for_each = lookup(pre_stop.value, "tcpSocket", {})
 
                             content {
                               port = lookup(tcp_socket.value, "port", null)
@@ -1642,7 +1642,7 @@ resource "kubernetes_job" "instance" {
                       }
 
                       dynamic "tcp_socket" { # Nesting Mode: list  
-                        for_each = lookup(liveness_probe.value, "tcpSockets", {})
+                        for_each = lookup(liveness_probe.value, "tcpSocket", {})
 
                         content {
                           port = lookup(tcp_socket.value, "port", null)
@@ -1756,7 +1756,7 @@ resource "kubernetes_job" "instance" {
                       }
 
                       dynamic "tcp_socket" { # Nesting Mode: list  
-                        for_each = lookup(readiness_probe.value, "tcpSockets", {})
+                        for_each = lookup(readiness_probe.value, "tcpSocket", {})
 
                         content {
                           port = lookup(tcp_socket.value, "port", null)
@@ -1945,7 +1945,7 @@ resource "kubernetes_job" "instance" {
                       }
 
                       dynamic "tcp_socket" { # Nesting Mode: list  
-                        for_each = lookup(startup_probe.value, "tcpSockets", {})
+                        for_each = lookup(startup_probe.value, "tcpSocket", {})
 
                         content {
                           port = lookup(tcp_socket.value, "port", null)

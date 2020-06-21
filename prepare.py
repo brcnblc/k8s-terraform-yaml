@@ -2,7 +2,9 @@ import json
 
 # Globals
 plural_exception_definitions = {
-  "global":["env","env_from"]
+  "global":["container", "port", "rule", "subject", "node_selector_term", "http_header",
+  "volume_mount", "option", "init_container", "metric", "toleration", "volume", "path",
+  "limit", "volume_claim_template", "webhook"]
 }
 
 computed_exception_definitions = {
@@ -146,7 +148,7 @@ def process_block(data, parent='each', file_name='', plural_exceptions=[], compu
       level += 1
 
       if nesting_mode == "list" and not max_items:
-        txt +=  (level * tab) + f'for_each = lookup({parent}.value, "{convert_to_camel_case(key)}{"s" if key not in plural_exceptions and key[-1] != "s" else ""}", {{}})' + f'\n'
+        txt +=  (level * tab) + f'for_each = lookup({parent}.value, "{convert_to_camel_case(key)}{"s" if key in plural_exceptions else ""}", {{}})' + f'\n'
       else:
         txt +=  (level * tab) + f'for_each = contains(keys({parent}.value), "{convert_to_camel_case(key)}") ? {{item = {parent}.value["{convert_to_camel_case(key)}"]}} : {{}}' + f'\n'
       

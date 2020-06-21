@@ -57,7 +57,7 @@ resource "kubernetes_network_policy" "instance" {
           }
 
           dynamic "to" { # Nesting Mode: list  
-            for_each = lookup(egress.value, "tos", {})
+            for_each = lookup(egress.value, "to", {})
 
             content {
               dynamic "ip_block" { # Nesting Mode: list  Max Items : 1  
@@ -146,7 +146,7 @@ resource "kubernetes_network_policy" "instance" {
 
         content {
           dynamic "from" { # Nesting Mode: list  
-            for_each = lookup(ingress.value, "froms", {})
+            for_each = lookup(ingress.value, "from", {})
 
             content {
               dynamic "ip_block" { # Nesting Mode: list  Max Items : 1  

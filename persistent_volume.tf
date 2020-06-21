@@ -22,7 +22,7 @@ resource "kubernetes_persistent_volume" "instance" {
   }
 
   dynamic "spec" { # Nesting Mode: list  Min Items : 1  
-    for_each = lookup(each.value, "specs", {})
+    for_each = lookup(each.value, "spec", {})
 
     content {
       access_modes = lookup(spec.value, "accessModes", null)
