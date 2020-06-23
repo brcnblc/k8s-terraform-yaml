@@ -1,8 +1,5 @@
 resource "kubernetes_cluster_role_binding" "instance" { 
   depends_on = [null_resource.module_depends_on]
-  lifecycle {
-    ignore_changes = all
-    }
   for_each = local.cluster_role_binding.applications
 
   dynamic "metadata" { # Nesting Mode: list  Min Items : 1  Max Items : 1  

@@ -1,8 +1,5 @@
 resource "kubernetes_storage_class" "instance" { 
   depends_on = [null_resource.module_depends_on]
-  lifecycle {
-    ignore_changes = all
-    }
   for_each = local.storage_class.applications
 
   allow_volume_expansion = lookup(each.value, "allowVolumeExpansion", null)

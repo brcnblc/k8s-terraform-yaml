@@ -1,8 +1,5 @@
 resource "kubernetes_horizontal_pod_autoscaler" "instance" { 
   depends_on = [null_resource.module_depends_on]
-  lifecycle {
-    ignore_changes = all
-    }
   for_each = local.horizontal_pod_autoscaler.applications
 
   dynamic "metadata" { # Nesting Mode: list  Min Items : 1  Max Items : 1  

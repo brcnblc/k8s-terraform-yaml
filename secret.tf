@@ -1,8 +1,5 @@
 resource "kubernetes_secret" "instance" { 
   depends_on = [null_resource.module_depends_on]
-  lifecycle {
-    ignore_changes = all
-    }
   for_each = local.secret.applications
 
   data = lookup(each.value, "data", null)
