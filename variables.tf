@@ -9,3 +9,8 @@ variable "namespace" {
   type = string
   default = ""
 }
+
+variable "ignore_changes" {
+  type = any
+  default = {}
+}

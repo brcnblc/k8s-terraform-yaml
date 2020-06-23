@@ -1,5 +1,8 @@
 resource "kubernetes_service_account" "instance" { 
   depends_on = [null_resource.module_depends_on]
+  lifecycle {
+    ignore_changes = all
+    }
   for_each = local.service_account.applications
 
   automount_service_account_token = lookup(each.value, "automountServiceAccountToken", null)

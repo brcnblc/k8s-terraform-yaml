@@ -224,6 +224,9 @@ def process_json(json_file = 'provider.json', filter=[], debug=False, verbose=1,
     txt = f'resource "{resource_name}" "instance" {{ \n'
     level = 1
     txt += (level * tab) + f'depends_on = [null_resource.module_depends_on]\n'
+    txt += (level * tab) + f'lifecycle {{\n' 
+    txt += (level * tab) + f'{tab}ignore_changes = all\n'
+    txt += (level * tab) + f'{tab }}}\n'
     txt += (level * tab) + f'for_each = local.{resource_short_name}.applications\n'
     txt += f'\n'
     output_file = f'{resource_short_name}.tf'

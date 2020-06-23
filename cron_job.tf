@@ -1,5 +1,8 @@
 resource "kubernetes_cron_job" "instance" { 
   depends_on = [null_resource.module_depends_on]
+  lifecycle {
+    ignore_changes = all
+    }
   for_each = local.cron_job.applications
 
   dynamic "metadata" { # Nesting Mode: list  Min Items : 1  Max Items : 1  

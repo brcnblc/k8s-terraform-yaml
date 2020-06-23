@@ -1,5 +1,8 @@
 resource "kubernetes_priority_class" "instance" { 
   depends_on = [null_resource.module_depends_on]
+  lifecycle {
+    ignore_changes = all
+    }
   for_each = local.priority_class.applications
 
   description = lookup(each.value, "description", null)

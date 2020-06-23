@@ -1,5 +1,8 @@
 resource "kubernetes_config_map" "instance" { 
   depends_on = [null_resource.module_depends_on]
+  lifecycle {
+    ignore_changes = all
+    }
   for_each = local.config_map.applications
 
   binary_data = lookup(each.value, "binaryData", null)

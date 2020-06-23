@@ -1,5 +1,8 @@
 resource "kubernetes_persistent_volume" "instance" { 
   depends_on = [null_resource.module_depends_on]
+  lifecycle {
+    ignore_changes = all
+    }
   for_each = local.persistent_volume.applications
 
   dynamic "metadata" { # Nesting Mode: list  Min Items : 1  Max Items : 1  
