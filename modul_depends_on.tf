@@ -8,9 +8,9 @@ variable "module_enabled" {
 }
 
 resource "null_resource" "module_depends_on" {
-  count = (length(var.module_depends_on) > 0 && var.module_enabled) ? 1 : 0
+  count = var.module_enabled ? 1 : 0
   triggers = {
-    value = length(var.module_depends_on)
+    value = var.module_depends_on
   }
 }
 
