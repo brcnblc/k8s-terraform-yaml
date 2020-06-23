@@ -10,7 +10,7 @@ variable "module_enabled" {
 resource "null_resource" "module_depends_on" {
   count = var.module_enabled ? 1 : 0
   triggers = {
-    value = var.module_depends_on
+    value = join("," , var.module_depends_on)
   }
 }
 
