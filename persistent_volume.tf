@@ -45,6 +45,10 @@ resource "kubernetes_persistent_volume" "instance" {
       # Type: string   Optional  
       # A description of the persistent volume's class. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class
 
+      volume_mode = lookup(spec.value, "volumeMode", null)
+      # Type: string   Optional  
+      # Defines if a volume is intended to be used with a formatted filesystem. or to remain in raw block state.
+
       dynamic "node_affinity" { # Nesting Mode: list  Max Items : 1  
         for_each = contains(keys(spec.value), "nodeAffinity") ? {item = spec.value["nodeAffinity"]} : {}
 
@@ -151,6 +155,10 @@ resource "kubernetes_persistent_volume" "instance" {
               # Type: string   Optional  
               # Filesystem type to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
 
+              kind = lookup(azure_disk.value, "kind", null)
+              # Type: string   Optional Computed 
+              # The type for the data disk. Expected values: Shared, Dedicated, Managed. Defaults to Shared
+
               read_only = lookup(azure_disk.value, "readOnly", null)
               # Type: bool   Optional  
               # Whether to force the read-only setting in VolumeMounts. Defaults to false (read/write).
@@ -209,6 +217,10 @@ resource "kubernetes_persistent_volume" "instance" {
                   # Type: string   Optional  
                   # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
+                  namespace = var.namespace != "" ? var.namespace : lookup(secret_ref.value, "namespace", null)
+                  # Type: string   Optional Computed 
+                  # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
                 }
               }
 
@@ -230,6 +242,93 @@ resource "kubernetes_persistent_volume" "instance" {
               volume_id = lookup(cinder.value, "volumeId", null)
               # Type: string Required    
               # Volume ID used to identify the volume in Cinder. More info: http://releases.k8s.io/HEAD/examples/mysql-cinder-pd/README.md
+
+            }
+          }
+
+          dynamic "csi" { # Nesting Mode: list  Max Items : 1  
+            for_each = contains(keys(persistent_volume_source.value), "csi") ? {item = persistent_volume_source.value["csi"]} : {}
+
+            content {
+              driver = lookup(csi.value, "driver", null)
+              # Type: string Required    
+              # the name of the volume driver to use. More info: https://kubernetes.io/docs/concepts/storage/volumes/#csi
+
+              fs_type = lookup(csi.value, "fsType", null)
+              # Type: string   Optional  
+              # Filesystem type to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
+
+              read_only = lookup(csi.value, "readOnly", null)
+              # Type: bool   Optional  
+              # Whether to set the read-only property in VolumeMounts to "true". If omitted, the default is "false". More info: http://kubernetes.io/docs/user-guide/volumes#csi
+
+              volume_attributes = lookup(csi.value, "volumeAttributes", null)
+              # Type: ['map', 'string']   Optional  
+              # Attributes of the volume to publish.
+
+              volume_handle = lookup(csi.value, "volumeHandle", null)
+              # Type: string Required    
+              # A string value that uniquely identifies the volume. More info: https://kubernetes.io/docs/concepts/storage/volumes/#csi
+
+              dynamic "controller_expand_secret_ref" { # Nesting Mode: list  Max Items : 1  
+                for_each = contains(keys(csi.value), "controllerExpandSecretRef") ? {item = csi.value["controllerExpandSecretRef"]} : {}
+
+                content {
+                  name = lookup(controller_expand_secret_ref.value, "name", null)
+                  # Type: string   Optional  
+                  # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                  namespace = var.namespace != "" ? var.namespace : lookup(controller_expand_secret_ref.value, "namespace", null)
+                  # Type: string   Optional Computed 
+                  # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                }
+              }
+
+              dynamic "controller_publish_secret_ref" { # Nesting Mode: list  Max Items : 1  
+                for_each = contains(keys(csi.value), "controllerPublishSecretRef") ? {item = csi.value["controllerPublishSecretRef"]} : {}
+
+                content {
+                  name = lookup(controller_publish_secret_ref.value, "name", null)
+                  # Type: string   Optional  
+                  # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                  namespace = var.namespace != "" ? var.namespace : lookup(controller_publish_secret_ref.value, "namespace", null)
+                  # Type: string   Optional Computed 
+                  # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                }
+              }
+
+              dynamic "node_publish_secret_ref" { # Nesting Mode: list  Max Items : 1  
+                for_each = contains(keys(csi.value), "nodePublishSecretRef") ? {item = csi.value["nodePublishSecretRef"]} : {}
+
+                content {
+                  name = lookup(node_publish_secret_ref.value, "name", null)
+                  # Type: string   Optional  
+                  # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                  namespace = var.namespace != "" ? var.namespace : lookup(node_publish_secret_ref.value, "namespace", null)
+                  # Type: string   Optional Computed 
+                  # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                }
+              }
+
+              dynamic "node_stage_secret_ref" { # Nesting Mode: list  Max Items : 1  
+                for_each = contains(keys(csi.value), "nodeStageSecretRef") ? {item = csi.value["nodeStageSecretRef"]} : {}
+
+                content {
+                  name = lookup(node_stage_secret_ref.value, "name", null)
+                  # Type: string   Optional  
+                  # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                  namespace = var.namespace != "" ? var.namespace : lookup(node_stage_secret_ref.value, "namespace", null)
+                  # Type: string   Optional Computed 
+                  # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                }
+              }
 
             }
           }
@@ -283,6 +382,10 @@ resource "kubernetes_persistent_volume" "instance" {
                 content {
                   name = lookup(secret_ref.value, "name", null)
                   # Type: string   Optional  
+                  # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                  namespace = var.namespace != "" ? var.namespace : lookup(secret_ref.value, "namespace", null)
+                  # Type: string   Optional Computed 
                   # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
                 }
@@ -504,6 +607,10 @@ resource "kubernetes_persistent_volume" "instance" {
                 content {
                   name = lookup(secret_ref.value, "name", null)
                   # Type: string   Optional  
+                  # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                  namespace = var.namespace != "" ? var.namespace : lookup(secret_ref.value, "namespace", null)
+                  # Type: string   Optional Computed 
                   # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
                 }

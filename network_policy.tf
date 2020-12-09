@@ -66,11 +66,11 @@ resource "kubernetes_network_policy" "instance" {
                 content {
                   cidr = lookup(ip_block.value, "cidr", null)
                   # Type: string   Optional  
-                  # CIDR is a string representing the IP Block Valid examples are "192.168.1.1/24"
+                  # CIDR is a string representing the IP Block Valid examples are "192.168.1.1/24" or "2001:db9::/64"
 
                   except = lookup(ip_block.value, "except", null)
                   # Type: ['list', 'string']   Optional  
-                  # Except is a slice of CIDRs that should not be included within an IP Block Valid examples are "192.168.1.1/24" Except values will be rejected if they are outside the CIDR range
+                  # Except is a slice of CIDRs that should not be included within an IP Block Valid examples are "192.168.1.1/24" or "2001:db9::/64" Except values will be rejected if they are outside the CIDR range
 
                 }
               }
@@ -155,11 +155,11 @@ resource "kubernetes_network_policy" "instance" {
                 content {
                   cidr = lookup(ip_block.value, "cidr", null)
                   # Type: string   Optional  
-                  # CIDR is a string representing the IP Block Valid examples are "192.168.1.1/24"
+                  # CIDR is a string representing the IP Block Valid examples are "192.168.1.1/24" or "2001:db9::/64"
 
                   except = lookup(ip_block.value, "except", null)
                   # Type: ['list', 'string']   Optional  
-                  # Except is a slice of CIDRs that should not be included within an IP Block Valid examples are "192.168.1.1/24" Except values will be rejected if they are outside the CIDR range
+                  # Except is a slice of CIDRs that should not be included within an IP Block Valid examples are "192.168.1.1/24" or "2001:db9::/64" Except values will be rejected if they are outside the CIDR range
 
                 }
               }

@@ -7,6 +7,11 @@ plural_exception_definitions = {
   "limit", "volume_claim_template", "webhook"]
 }
 
+explicit_exception_definitions = {
+  "global":{}
+}
+
+
 computed_exception_definitions = {
   "global": ["container.resources.limits","container.resources.requests"]
 }
@@ -47,7 +52,7 @@ def write_file(file_name, txt, mode):
 
   return
 
-def process_block(data, parent='each', file_name='', plural_exceptions=[], computed_exceptions=[], max_item_exceptions=[], objpath="",debug=False, verbose=2, resource_name='',resource_short_name='',long_out=False):
+def process_block(data, parent='each', file_name='', plural_exceptions=[], computed_exceptions=[], max_item_exceptions=[], explicit_exceptions=[], objpath="",debug=False, verbose=2, resource_name='',resource_short_name='',long_out=False):
   global level
   block= nesting_mode= version= attributes= block_types= min_items= max_items= None
   
@@ -66,6 +71,7 @@ def process_block(data, parent='each', file_name='', plural_exceptions=[], compu
       plural_exceptions= plural_exceptions,
       computed_exceptions= computed_exceptions,
       max_item_exceptions= max_item_exceptions,
+      explicit_exceptions = explicit_exceptions,
       objpath= objpath,
       debug= debug,
       verbose= verbose,
@@ -110,7 +116,10 @@ def process_block(data, parent='each', file_name='', plural_exceptions=[], compu
         if key == "id":continue
         txt = ""
         if key != "namespace":
-          txt += ( level * tab ) + f'{key} = lookup({parent}.value, "{convert_to_camel_case(key)}", null)' + f'\n' 
+          if key in explicit_exceptions:
+            txt +=  (level * tab) + f'{key} = lookup({parent}.value,, "{explicit_exceptions[key]}", null)' + f'\n'
+          else:
+            txt += ( level * tab ) + f'{key} = lookup({parent}.value, "{convert_to_camel_case(key).replace("Ip","IP").replace("IPc","IPC")}", null)' + f'\n' 
         else:
           txt += ( level * tab ) + f'{key} = var.namespace != "" ? var.namespace : lookup({parent}.value, "{convert_to_camel_case(key)}", null)' + f'\n' 
         txt += ( level * tab ) + f'# Type: {type} {"Required" if required else ""}  {"Optional" if optional else ""} {"Computed" if computed else ""} {"Sensitive" if sensitive else ""}' + f'\n' 
@@ -153,7 +162,10 @@ def process_block(data, parent='each', file_name='', plural_exceptions=[], compu
       level += 1
 
       if nesting_mode == "list" and not max_items and not (key in max_item_exceptions):
-        txt +=  (level * tab) + f'for_each = lookup({parent}.value, "{convert_to_camel_case(key)}{"s" if key in plural_exceptions else ""}", {{}})' + f'\n'
+        if key in explicit_exceptions:
+          txt +=  (level * tab) + f'for_each = lookup({parent}.value, "{explicit_exceptions[key]}", {{}})' + f'\n'
+        else:  
+          txt +=  (level * tab) + f'for_each = lookup({parent}.value, "{convert_to_camel_case(key)}{"s" if key in plural_exceptions else ""}", {{}})' + f'\n'
       else:
         txt +=  (level * tab) + f'for_each = contains(keys({parent}.value), "{convert_to_camel_case(key)}") ? {{item = {parent}.value["{convert_to_camel_case(key)}"]}} : {{}}' + f'\n'
       
@@ -170,6 +182,7 @@ def process_block(data, parent='each', file_name='', plural_exceptions=[], compu
         plural_exceptions=plural_exceptions,
         computed_exceptions=computed_exceptions,
         max_item_exceptions=max_item_exceptions,
+        explicit_exceptions=explicit_exceptions,
         objpath=objpath + "." + key, 
         debug= debug, 
         verbose= verbose,
@@ -189,7 +202,7 @@ def process_block(data, parent='each', file_name='', plural_exceptions=[], compu
 
 def process_json(json_file = 'provider.json', filter=[], debug=False, verbose=1, config_var="appConfig", long_out=False):
   global level, tab
-  global plural_exception_definitions, computed_exception_definitions, max_item_exception_definitions
+  global plural_exception_definitions, computed_exception_definitions, max_item_exception_definitions, explicit_exception_definitions
   
   
   data = import_file(json_file)
@@ -245,6 +258,11 @@ def process_json(json_file = 'provider.json', filter=[], debug=False, verbose=1,
     local_plural_exceptions = plural_exception_definitions[resource_short_name] if resource_short_name in plural_exception_definitions else []
     plural_exceptions = global_plural_exceptions + local_plural_exceptions
 
+    # Explicit Exceptions
+    global_explicit_exceptions = explicit_exception_definitions["global"] if "global" in explicit_exception_definitions else {}
+    local_explicit_exceptions = explicit_exception_definitions[resource_short_name] if resource_short_name in explicit_exception_definitions else {}
+    explicit_exceptions = {**global_explicit_exceptions, **local_explicit_exceptions}
+
     # Computed Exceptions
     global_computed_exceptions = computed_exception_definitions["global"] if "global" in computed_exception_definitions else []
     local_computed_exceptions = computed_exception_definitions[resource_short_name] if resource_short_name in computed_exception_definitions else []
@@ -262,6 +280,7 @@ def process_json(json_file = 'provider.json', filter=[], debug=False, verbose=1,
       plural_exceptions = plural_exceptions,
       computed_exceptions = computed_exceptions,
       max_item_exceptions = max_item_exceptions,
+      explicit_exceptions = explicit_exceptions,
       objpath = "", 
       debug = debug,
       verbose = verbose,

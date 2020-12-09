@@ -23,6 +23,30 @@ value = {
 
       } : null
 
+      certificate_signing_request = contains(keys(local.certificate_signing_request.applications), app) ? {
+        certificate = try(kubernetes_certificate_signing_request.instance[app].certificate,null)
+        # If request was approved, the controller will place the issued certificate here.
+
+        metadata = {
+          generation = try(kubernetes_certificate_signing_request.instance[app].metadata.0.generation,null)
+          # A sequence number representing a specific generation of the desired state.
+
+          name = try(kubernetes_certificate_signing_request.instance[app].metadata.0.name,null)
+          # Name of the certificate signing request, must be unique. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+          resourceVersion = try(kubernetes_certificate_signing_request.instance[app].metadata.0.resource_version,null)
+          # An opaque value that represents the internal version of this certificate signing request that can be used by clients to determine when certificate signing request has changed. Read more: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
+
+          selfLink = try(kubernetes_certificate_signing_request.instance[app].metadata.0.self_link,null)
+          # A URL representing this certificate signing request.
+
+          uid = try(kubernetes_certificate_signing_request.instance[app].metadata.0.uid,null)
+          # The unique in time and space value for this certificate signing request. More info: http://kubernetes.io/docs/user-guide/identifiers#uids
+
+        }
+
+      } : null
+
       cluster_role = contains(keys(local.cluster_role.applications), app) ? {
         metadata = {
           generation = try(kubernetes_cluster_role.instance[app].metadata.0.generation,null)
@@ -163,6 +187,9 @@ value = {
           imagePullPolicy = try(kubernetes_cron_job.instance[app].spec.0.job_template.0.spec.0.template.0.spec.0.container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
 
+          terminationMessagePolicy = try(kubernetes_cron_job.instance[app].spec.0.job_template.0.spec.0.template.0.spec.0.container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
         }
 
         spec_job_template_spec_template_spec_container_resources_limits = {
@@ -179,6 +206,9 @@ value = {
           imagePullPolicy = try(kubernetes_cron_job.instance[app].spec.0.job_template.0.spec.0.template.0.spec.0.init_container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
 
+          terminationMessagePolicy = try(kubernetes_cron_job.instance[app].spec.0.job_template.0.spec.0.template.0.spec.0.init_container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
         }
 
         spec_job_template_spec_template_spec_init_container_resources_limits = {
@@ -191,9 +221,78 @@ value = {
           memory = try(kubernetes_cron_job.instance[app].spec.0.job_template.0.spec.0.template.0.spec.0.init_container.0.resources.0.requests.0.memory,null)
         }
 
+        spec_job_template_spec_template_spec_volume_azure_disk = {
+          kind = try(kubernetes_cron_job.instance[app].spec.0.job_template.0.spec.0.template.0.spec.0.volume.0.azure_disk.0.kind,null)
+          # The type for the data disk. Expected values: Shared, Dedicated, Managed. Defaults to Shared
+
+        }
+
+        spec_job_template_spec_template_spec_volume_ceph_fs_secret_ref = {
+          namespace = try(kubernetes_cron_job.instance[app].spec.0.job_template.0.spec.0.template.0.spec.0.volume.0.ceph_fs.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_job_template_spec_template_spec_volume_csi_controller_expand_secret_ref = {
+          namespace = try(kubernetes_cron_job.instance[app].spec.0.job_template.0.spec.0.template.0.spec.0.volume.0.csi.0.controller_expand_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_job_template_spec_template_spec_volume_csi_controller_publish_secret_ref = {
+          namespace = try(kubernetes_cron_job.instance[app].spec.0.job_template.0.spec.0.template.0.spec.0.volume.0.csi.0.controller_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_job_template_spec_template_spec_volume_csi_node_publish_secret_ref = {
+          namespace = try(kubernetes_cron_job.instance[app].spec.0.job_template.0.spec.0.template.0.spec.0.volume.0.csi.0.node_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_job_template_spec_template_spec_volume_csi_node_stage_secret_ref = {
+          namespace = try(kubernetes_cron_job.instance[app].spec.0.job_template.0.spec.0.template.0.spec.0.volume.0.csi.0.node_stage_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_job_template_spec_template_spec_volume_flex_volume_secret_ref = {
+          namespace = try(kubernetes_cron_job.instance[app].spec.0.job_template.0.spec.0.template.0.spec.0.volume.0.flex_volume.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
         spec_job_template_spec_template_spec_volume_rbd = {
           keyring = try(kubernetes_cron_job.instance[app].spec.0.job_template.0.spec.0.template.0.spec.0.volume.0.rbd.0.keyring,null)
           # Keyring is the path to key ring for RBDUser. Default is /etc/ceph/keyring. More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it
+
+        }
+
+        spec_job_template_spec_template_spec_volume_rbd_secret_ref = {
+          namespace = try(kubernetes_cron_job.instance[app].spec.0.job_template.0.spec.0.template.0.spec.0.volume.0.rbd.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+      } : null
+
+      csi_driver = contains(keys(local.csi_driver.applications), app) ? {
+        metadata = {
+          generation = try(kubernetes_csi_driver.instance[app].metadata.0.generation,null)
+          # A sequence number representing a specific generation of the desired state.
+
+          name = try(kubernetes_csi_driver.instance[app].metadata.0.name,null)
+          # Name of the csi driver, must be unique. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+          resourceVersion = try(kubernetes_csi_driver.instance[app].metadata.0.resource_version,null)
+          # An opaque value that represents the internal version of this csi driver that can be used by clients to determine when csi driver has changed. Read more: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
+
+          selfLink = try(kubernetes_csi_driver.instance[app].metadata.0.self_link,null)
+          # A URL representing this csi driver.
+
+          uid = try(kubernetes_csi_driver.instance[app].metadata.0.uid,null)
+          # The unique in time and space value for this csi driver. More info: http://kubernetes.io/docs/user-guide/identifiers#uids
 
         }
 
@@ -252,6 +351,9 @@ value = {
           imagePullPolicy = try(kubernetes_daemonset.instance[app].spec.0.template.0.spec.0.container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
 
+          terminationMessagePolicy = try(kubernetes_daemonset.instance[app].spec.0.template.0.spec.0.container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
         }
 
         spec_template_spec_container_resources_limits = {
@@ -268,6 +370,9 @@ value = {
           imagePullPolicy = try(kubernetes_daemonset.instance[app].spec.0.template.0.spec.0.init_container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
 
+          terminationMessagePolicy = try(kubernetes_daemonset.instance[app].spec.0.template.0.spec.0.init_container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
         }
 
         spec_template_spec_init_container_resources_limits = {
@@ -280,9 +385,76 @@ value = {
           memory = try(kubernetes_daemonset.instance[app].spec.0.template.0.spec.0.init_container.0.resources.0.requests.0.memory,null)
         }
 
+        spec_template_spec_volume_azure_disk = {
+          kind = try(kubernetes_daemonset.instance[app].spec.0.template.0.spec.0.volume.0.azure_disk.0.kind,null)
+          # The type for the data disk. Expected values: Shared, Dedicated, Managed. Defaults to Shared
+
+        }
+
+        spec_template_spec_volume_ceph_fs_secret_ref = {
+          namespace = try(kubernetes_daemonset.instance[app].spec.0.template.0.spec.0.volume.0.ceph_fs.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_controller_expand_secret_ref = {
+          namespace = try(kubernetes_daemonset.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.controller_expand_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_controller_publish_secret_ref = {
+          namespace = try(kubernetes_daemonset.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.controller_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_node_publish_secret_ref = {
+          namespace = try(kubernetes_daemonset.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.node_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_node_stage_secret_ref = {
+          namespace = try(kubernetes_daemonset.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.node_stage_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_flex_volume_secret_ref = {
+          namespace = try(kubernetes_daemonset.instance[app].spec.0.template.0.spec.0.volume.0.flex_volume.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
         spec_template_spec_volume_rbd = {
           keyring = try(kubernetes_daemonset.instance[app].spec.0.template.0.spec.0.volume.0.rbd.0.keyring,null)
           # Keyring is the path to key ring for RBDUser. Default is /etc/ceph/keyring. More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it
+
+        }
+
+        spec_template_spec_volume_rbd_secret_ref = {
+          namespace = try(kubernetes_daemonset.instance[app].spec.0.template.0.spec.0.volume.0.rbd.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+      } : null
+
+      default_service_account = contains(keys(local.default_service_account.applications), app) ? {
+        defaultSecretName = try(kubernetes_default_service_account.instance[app].default_secret_name,null)
+        metadata = {
+          generation = try(kubernetes_default_service_account.instance[app].metadata.0.generation,null)
+          # A sequence number representing a specific generation of the desired state.
+
+          resourceVersion = try(kubernetes_default_service_account.instance[app].metadata.0.resource_version,null)
+          # An opaque value that represents the internal version of this service account that can be used by clients to determine when service account has changed. Read more: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
+
+          selfLink = try(kubernetes_default_service_account.instance[app].metadata.0.self_link,null)
+          # A URL representing this service account.
+
+          uid = try(kubernetes_default_service_account.instance[app].metadata.0.uid,null)
+          # The unique in time and space value for this service account. More info: http://kubernetes.io/docs/user-guide/identifiers#uids
 
         }
 
@@ -341,6 +513,9 @@ value = {
           imagePullPolicy = try(kubernetes_deployment.instance[app].spec.0.template.0.spec.0.container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
 
+          terminationMessagePolicy = try(kubernetes_deployment.instance[app].spec.0.template.0.spec.0.container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
         }
 
         spec_template_spec_container_resources_limits = {
@@ -357,6 +532,9 @@ value = {
           imagePullPolicy = try(kubernetes_deployment.instance[app].spec.0.template.0.spec.0.init_container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
 
+          terminationMessagePolicy = try(kubernetes_deployment.instance[app].spec.0.template.0.spec.0.init_container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
         }
 
         spec_template_spec_init_container_resources_limits = {
@@ -369,9 +547,57 @@ value = {
           memory = try(kubernetes_deployment.instance[app].spec.0.template.0.spec.0.init_container.0.resources.0.requests.0.memory,null)
         }
 
+        spec_template_spec_volume_azure_disk = {
+          kind = try(kubernetes_deployment.instance[app].spec.0.template.0.spec.0.volume.0.azure_disk.0.kind,null)
+          # The type for the data disk. Expected values: Shared, Dedicated, Managed. Defaults to Shared
+
+        }
+
+        spec_template_spec_volume_ceph_fs_secret_ref = {
+          namespace = try(kubernetes_deployment.instance[app].spec.0.template.0.spec.0.volume.0.ceph_fs.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_controller_expand_secret_ref = {
+          namespace = try(kubernetes_deployment.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.controller_expand_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_controller_publish_secret_ref = {
+          namespace = try(kubernetes_deployment.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.controller_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_node_publish_secret_ref = {
+          namespace = try(kubernetes_deployment.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.node_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_node_stage_secret_ref = {
+          namespace = try(kubernetes_deployment.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.node_stage_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_flex_volume_secret_ref = {
+          namespace = try(kubernetes_deployment.instance[app].spec.0.template.0.spec.0.volume.0.flex_volume.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
         spec_template_spec_volume_rbd = {
           keyring = try(kubernetes_deployment.instance[app].spec.0.template.0.spec.0.volume.0.rbd.0.keyring,null)
           # Keyring is the path to key ring for RBDUser. Default is /etc/ceph/keyring. More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it
+
+        }
+
+        spec_template_spec_volume_rbd_secret_ref = {
+          namespace = try(kubernetes_deployment.instance[app].spec.0.template.0.spec.0.volume.0.rbd.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
         }
 
@@ -515,6 +741,9 @@ value = {
           imagePullPolicy = try(kubernetes_job.instance[app].spec.0.template.0.spec.0.container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
 
+          terminationMessagePolicy = try(kubernetes_job.instance[app].spec.0.template.0.spec.0.container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
         }
 
         spec_template_spec_container_resources_limits = {
@@ -531,6 +760,9 @@ value = {
           imagePullPolicy = try(kubernetes_job.instance[app].spec.0.template.0.spec.0.init_container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
 
+          terminationMessagePolicy = try(kubernetes_job.instance[app].spec.0.template.0.spec.0.init_container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
         }
 
         spec_template_spec_init_container_resources_limits = {
@@ -543,9 +775,57 @@ value = {
           memory = try(kubernetes_job.instance[app].spec.0.template.0.spec.0.init_container.0.resources.0.requests.0.memory,null)
         }
 
+        spec_template_spec_volume_azure_disk = {
+          kind = try(kubernetes_job.instance[app].spec.0.template.0.spec.0.volume.0.azure_disk.0.kind,null)
+          # The type for the data disk. Expected values: Shared, Dedicated, Managed. Defaults to Shared
+
+        }
+
+        spec_template_spec_volume_ceph_fs_secret_ref = {
+          namespace = try(kubernetes_job.instance[app].spec.0.template.0.spec.0.volume.0.ceph_fs.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_controller_expand_secret_ref = {
+          namespace = try(kubernetes_job.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.controller_expand_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_controller_publish_secret_ref = {
+          namespace = try(kubernetes_job.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.controller_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_node_publish_secret_ref = {
+          namespace = try(kubernetes_job.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.node_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_node_stage_secret_ref = {
+          namespace = try(kubernetes_job.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.node_stage_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_flex_volume_secret_ref = {
+          namespace = try(kubernetes_job.instance[app].spec.0.template.0.spec.0.volume.0.flex_volume.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
         spec_template_spec_volume_rbd = {
           keyring = try(kubernetes_job.instance[app].spec.0.template.0.spec.0.volume.0.rbd.0.keyring,null)
           # Keyring is the path to key ring for RBDUser. Default is /etc/ceph/keyring. More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it
+
+        }
+
+        spec_template_spec_volume_rbd_secret_ref = {
+          namespace = try(kubernetes_job.instance[app].spec.0.template.0.spec.0.volume.0.rbd.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
         }
 
@@ -660,9 +940,57 @@ value = {
 
         }
 
+        spec_persistent_volume_source_azure_disk = {
+          kind = try(kubernetes_persistent_volume.instance[app].spec.0.persistent_volume_source.0.azure_disk.0.kind,null)
+          # The type for the data disk. Expected values: Shared, Dedicated, Managed. Defaults to Shared
+
+        }
+
+        spec_persistent_volume_source_ceph_fs_secret_ref = {
+          namespace = try(kubernetes_persistent_volume.instance[app].spec.0.persistent_volume_source.0.ceph_fs.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_persistent_volume_source_csi_controller_expand_secret_ref = {
+          namespace = try(kubernetes_persistent_volume.instance[app].spec.0.persistent_volume_source.0.csi.0.controller_expand_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_persistent_volume_source_csi_controller_publish_secret_ref = {
+          namespace = try(kubernetes_persistent_volume.instance[app].spec.0.persistent_volume_source.0.csi.0.controller_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_persistent_volume_source_csi_node_publish_secret_ref = {
+          namespace = try(kubernetes_persistent_volume.instance[app].spec.0.persistent_volume_source.0.csi.0.node_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_persistent_volume_source_csi_node_stage_secret_ref = {
+          namespace = try(kubernetes_persistent_volume.instance[app].spec.0.persistent_volume_source.0.csi.0.node_stage_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_persistent_volume_source_flex_volume_secret_ref = {
+          namespace = try(kubernetes_persistent_volume.instance[app].spec.0.persistent_volume_source.0.flex_volume.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
         spec_persistent_volume_source_rbd = {
           keyring = try(kubernetes_persistent_volume.instance[app].spec.0.persistent_volume_source.0.rbd.0.keyring,null)
           # Keyring is the path to key ring for RBDUser. Default is /etc/ceph/keyring. More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it
+
+        }
+
+        spec_persistent_volume_source_rbd_secret_ref = {
+          namespace = try(kubernetes_persistent_volume.instance[app].spec.0.persistent_volume_source.0.rbd.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
         }
 
@@ -733,6 +1061,9 @@ value = {
           imagePullPolicy = try(kubernetes_pod.instance[app].spec.0.container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
 
+          terminationMessagePolicy = try(kubernetes_pod.instance[app].spec.0.container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
         }
 
         spec_container_resources_limits = {
@@ -749,6 +1080,9 @@ value = {
           imagePullPolicy = try(kubernetes_pod.instance[app].spec.0.init_container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
 
+          terminationMessagePolicy = try(kubernetes_pod.instance[app].spec.0.init_container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
         }
 
         spec_init_container_resources_limits = {
@@ -761,9 +1095,57 @@ value = {
           memory = try(kubernetes_pod.instance[app].spec.0.init_container.0.resources.0.requests.0.memory,null)
         }
 
+        spec_volume_azure_disk = {
+          kind = try(kubernetes_pod.instance[app].spec.0.volume.0.azure_disk.0.kind,null)
+          # The type for the data disk. Expected values: Shared, Dedicated, Managed. Defaults to Shared
+
+        }
+
+        spec_volume_ceph_fs_secret_ref = {
+          namespace = try(kubernetes_pod.instance[app].spec.0.volume.0.ceph_fs.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_volume_csi_controller_expand_secret_ref = {
+          namespace = try(kubernetes_pod.instance[app].spec.0.volume.0.csi.0.controller_expand_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_volume_csi_controller_publish_secret_ref = {
+          namespace = try(kubernetes_pod.instance[app].spec.0.volume.0.csi.0.controller_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_volume_csi_node_publish_secret_ref = {
+          namespace = try(kubernetes_pod.instance[app].spec.0.volume.0.csi.0.node_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_volume_csi_node_stage_secret_ref = {
+          namespace = try(kubernetes_pod.instance[app].spec.0.volume.0.csi.0.node_stage_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_volume_flex_volume_secret_ref = {
+          namespace = try(kubernetes_pod.instance[app].spec.0.volume.0.flex_volume.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
         spec_volume_rbd = {
           keyring = try(kubernetes_pod.instance[app].spec.0.volume.0.rbd.0.keyring,null)
           # Keyring is the path to key ring for RBDUser. Default is /etc/ceph/keyring. More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it
+
+        }
+
+        spec_volume_rbd_secret_ref = {
+          namespace = try(kubernetes_pod.instance[app].spec.0.volume.0.rbd.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
         }
 
@@ -785,6 +1167,60 @@ value = {
 
           uid = try(kubernetes_pod_disruption_budget.instance[app].metadata.0.uid,null)
           # The unique in time and space value for this pod disruption budget. More info: http://kubernetes.io/docs/user-guide/identifiers#uids
+
+        }
+
+      } : null
+
+      pod_security_policy = contains(keys(local.pod_security_policy.applications), app) ? {
+        metadata = {
+          generation = try(kubernetes_pod_security_policy.instance[app].metadata.0.generation,null)
+          # A sequence number representing a specific generation of the desired state.
+
+          name = try(kubernetes_pod_security_policy.instance[app].metadata.0.name,null)
+          # Name of the podsecuritypolicy, must be unique. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+          resourceVersion = try(kubernetes_pod_security_policy.instance[app].metadata.0.resource_version,null)
+          # An opaque value that represents the internal version of this podsecuritypolicy that can be used by clients to determine when podsecuritypolicy has changed. Read more: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
+
+          selfLink = try(kubernetes_pod_security_policy.instance[app].metadata.0.self_link,null)
+          # A URL representing this podsecuritypolicy.
+
+          uid = try(kubernetes_pod_security_policy.instance[app].metadata.0.uid,null)
+          # The unique in time and space value for this podsecuritypolicy. More info: http://kubernetes.io/docs/user-guide/identifiers#uids
+
+        }
+
+        spec = {
+          allowPrivilegeEscalation = try(kubernetes_pod_security_policy.instance[app].spec.0.allow_privilege_escalation,null)
+          # allowPrivilegeEscalation determines if a pod can request to allow privilege escalation. If unspecified, defaults to true.
+
+          allowedCapabilities = try(kubernetes_pod_security_policy.instance[app].spec.0.allowed_capabilities,null)
+          # allowedCapabilities is a list of capabilities that can be requested to add to the container. Capabilities in this field may be added at the pod author's discretion. You must not list a capability in both allowedCapabilities and requiredDropCapabilities.
+
+          defaultAllowPrivilegeEscalation = try(kubernetes_pod_security_policy.instance[app].spec.0.default_allow_privilege_escalation,null)
+          # defaultAllowPrivilegeEscalation controls the default setting for whether a process can gain more privileges than its parent process.
+
+          hostIpc = try(kubernetes_pod_security_policy.instance[app].spec.0.host_ipc,null)
+          # hostIPC determines if the policy allows the use of HostIPC in the pod spec.
+
+          hostNetwork = try(kubernetes_pod_security_policy.instance[app].spec.0.host_network,null)
+          # hostNetwork determines if the policy allows the use of HostNetwork in the pod spec.
+
+          hostPid = try(kubernetes_pod_security_policy.instance[app].spec.0.host_pid,null)
+          # hostPID determines if the policy allows the use of HostPID in the pod spec.
+
+          privileged = try(kubernetes_pod_security_policy.instance[app].spec.0.privileged,null)
+          # privileged determines if a pod can request to be run as privileged.
+
+          readOnlyRootFilesystem = try(kubernetes_pod_security_policy.instance[app].spec.0.read_only_root_filesystem,null)
+          # readOnlyRootFilesystem when set to true will force containers to run with a read only root file system.  If the container specifically requests to run with a non-read only root file system the PSP should deny the pod. If set to false the container may run with a read only root file system if it wishes but it will not be forced to.
+
+          requiredDropCapabilities = try(kubernetes_pod_security_policy.instance[app].spec.0.required_drop_capabilities,null)
+          # requiredDropCapabilities are the capabilities that will be dropped from the container.  These are required to be dropped and cannot be added.
+
+          volumes = try(kubernetes_pod_security_policy.instance[app].spec.0.volumes,null)
+          # volumes is an allowlist of volume plugins. Empty indicates that no volumes may be used. To allow all volumes you may use '*'.
 
         }
 
@@ -876,6 +1312,9 @@ value = {
           imagePullPolicy = try(kubernetes_replication_controller.instance[app].spec.0.template.0.container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
 
+          terminationMessagePolicy = try(kubernetes_replication_controller.instance[app].spec.0.template.0.container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
         }
 
         spec_template_container_resources_limits = {
@@ -891,6 +1330,9 @@ value = {
         spec_template_init_container = {
           imagePullPolicy = try(kubernetes_replication_controller.instance[app].spec.0.template.0.init_container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
+
+          terminationMessagePolicy = try(kubernetes_replication_controller.instance[app].spec.0.template.0.init_container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
 
         }
 
@@ -968,6 +1410,9 @@ value = {
           imagePullPolicy = try(kubernetes_replication_controller.instance[app].spec.0.template.0.spec.0.container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
 
+          terminationMessagePolicy = try(kubernetes_replication_controller.instance[app].spec.0.template.0.spec.0.container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
         }
 
         spec_template_spec_container_resources_limits = {
@@ -984,6 +1429,9 @@ value = {
           imagePullPolicy = try(kubernetes_replication_controller.instance[app].spec.0.template.0.spec.0.init_container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
 
+          terminationMessagePolicy = try(kubernetes_replication_controller.instance[app].spec.0.template.0.spec.0.init_container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
         }
 
         spec_template_spec_init_container_resources_limits = {
@@ -996,15 +1444,111 @@ value = {
           memory = try(kubernetes_replication_controller.instance[app].spec.0.template.0.spec.0.init_container.0.resources.0.requests.0.memory,null)
         }
 
+        spec_template_spec_volume_azure_disk = {
+          kind = try(kubernetes_replication_controller.instance[app].spec.0.template.0.spec.0.volume.0.azure_disk.0.kind,null)
+          # The type for the data disk. Expected values: Shared, Dedicated, Managed. Defaults to Shared
+
+        }
+
+        spec_template_spec_volume_ceph_fs_secret_ref = {
+          namespace = try(kubernetes_replication_controller.instance[app].spec.0.template.0.spec.0.volume.0.ceph_fs.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_controller_expand_secret_ref = {
+          namespace = try(kubernetes_replication_controller.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.controller_expand_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_controller_publish_secret_ref = {
+          namespace = try(kubernetes_replication_controller.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.controller_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_node_publish_secret_ref = {
+          namespace = try(kubernetes_replication_controller.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.node_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_node_stage_secret_ref = {
+          namespace = try(kubernetes_replication_controller.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.node_stage_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_flex_volume_secret_ref = {
+          namespace = try(kubernetes_replication_controller.instance[app].spec.0.template.0.spec.0.volume.0.flex_volume.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
         spec_template_spec_volume_rbd = {
           keyring = try(kubernetes_replication_controller.instance[app].spec.0.template.0.spec.0.volume.0.rbd.0.keyring,null)
           # Keyring is the path to key ring for RBDUser. Default is /etc/ceph/keyring. More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it
 
         }
 
+        spec_template_spec_volume_rbd_secret_ref = {
+          namespace = try(kubernetes_replication_controller.instance[app].spec.0.template.0.spec.0.volume.0.rbd.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_volume_azure_disk = {
+          kind = try(kubernetes_replication_controller.instance[app].spec.0.template.0.volume.0.azure_disk.0.kind,null)
+          # The type for the data disk. Expected values: Shared, Dedicated, Managed. Defaults to Shared
+
+        }
+
+        spec_template_volume_ceph_fs_secret_ref = {
+          namespace = try(kubernetes_replication_controller.instance[app].spec.0.template.0.volume.0.ceph_fs.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_volume_csi_controller_expand_secret_ref = {
+          namespace = try(kubernetes_replication_controller.instance[app].spec.0.template.0.volume.0.csi.0.controller_expand_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_volume_csi_controller_publish_secret_ref = {
+          namespace = try(kubernetes_replication_controller.instance[app].spec.0.template.0.volume.0.csi.0.controller_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_volume_csi_node_publish_secret_ref = {
+          namespace = try(kubernetes_replication_controller.instance[app].spec.0.template.0.volume.0.csi.0.node_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_volume_csi_node_stage_secret_ref = {
+          namespace = try(kubernetes_replication_controller.instance[app].spec.0.template.0.volume.0.csi.0.node_stage_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_volume_flex_volume_secret_ref = {
+          namespace = try(kubernetes_replication_controller.instance[app].spec.0.template.0.volume.0.flex_volume.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
         spec_template_volume_rbd = {
           keyring = try(kubernetes_replication_controller.instance[app].spec.0.template.0.volume.0.rbd.0.keyring,null)
           # Keyring is the path to key ring for RBDUser. Default is /etc/ceph/keyring. More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it
+
+        }
+
+        spec_template_volume_rbd_secret_ref = {
+          namespace = try(kubernetes_replication_controller.instance[app].spec.0.template.0.volume.0.rbd.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
         }
 
@@ -1127,6 +1671,9 @@ value = {
           externalTrafficPolicy = try(kubernetes_service.instance[app].spec.0.external_traffic_policy,null)
           # Denotes if this Service desires to route external traffic to node-local or cluster-wide endpoints. `Local` preserves the client source IP and avoids a second hop for LoadBalancer and Nodeport type services, but risks potentially imbalanced traffic spreading. `Cluster` obscures the client source IP and may cause a second hop to another node, but should have good overall load-spreading. More info: https://kubernetes.io/docs/tutorials/services/source-ip/
 
+          healthCheckNodePort = try(kubernetes_service.instance[app].spec.0.health_check_node_port,null)
+          # Specifies the Healthcheck NodePort for the service. Only effects when type is set to `LoadBalancer` and external_traffic_policy is set to `Local`.
+
         }
 
         spec_port = {
@@ -1224,6 +1771,9 @@ value = {
           imagePullPolicy = try(kubernetes_stateful_set.instance[app].spec.0.template.0.spec.0.container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
 
+          terminationMessagePolicy = try(kubernetes_stateful_set.instance[app].spec.0.template.0.spec.0.container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
         }
 
         spec_template_spec_container_resources_limits = {
@@ -1240,6 +1790,9 @@ value = {
           imagePullPolicy = try(kubernetes_stateful_set.instance[app].spec.0.template.0.spec.0.init_container.0.image_pull_policy,null)
           # Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag is specified, or IfNotPresent otherwise. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/images#updating-images
 
+          terminationMessagePolicy = try(kubernetes_stateful_set.instance[app].spec.0.template.0.spec.0.init_container.0.termination_message_policy,null)
+          # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
         }
 
         spec_template_spec_init_container_resources_limits = {
@@ -1252,9 +1805,57 @@ value = {
           memory = try(kubernetes_stateful_set.instance[app].spec.0.template.0.spec.0.init_container.0.resources.0.requests.0.memory,null)
         }
 
+        spec_template_spec_volume_azure_disk = {
+          kind = try(kubernetes_stateful_set.instance[app].spec.0.template.0.spec.0.volume.0.azure_disk.0.kind,null)
+          # The type for the data disk. Expected values: Shared, Dedicated, Managed. Defaults to Shared
+
+        }
+
+        spec_template_spec_volume_ceph_fs_secret_ref = {
+          namespace = try(kubernetes_stateful_set.instance[app].spec.0.template.0.spec.0.volume.0.ceph_fs.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_controller_expand_secret_ref = {
+          namespace = try(kubernetes_stateful_set.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.controller_expand_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_controller_publish_secret_ref = {
+          namespace = try(kubernetes_stateful_set.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.controller_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_node_publish_secret_ref = {
+          namespace = try(kubernetes_stateful_set.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.node_publish_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_csi_node_stage_secret_ref = {
+          namespace = try(kubernetes_stateful_set.instance[app].spec.0.template.0.spec.0.volume.0.csi.0.node_stage_secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
+        spec_template_spec_volume_flex_volume_secret_ref = {
+          namespace = try(kubernetes_stateful_set.instance[app].spec.0.template.0.spec.0.volume.0.flex_volume.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+        }
+
         spec_template_spec_volume_rbd = {
           keyring = try(kubernetes_stateful_set.instance[app].spec.0.template.0.spec.0.volume.0.rbd.0.keyring,null)
           # Keyring is the path to key ring for RBDUser. Default is /etc/ceph/keyring. More info: http://releases.k8s.io/HEAD/examples/volumes/rbd/README.md#how-to-use-it
+
+        }
+
+        spec_template_spec_volume_rbd_secret_ref = {
+          namespace = try(kubernetes_stateful_set.instance[app].spec.0.template.0.spec.0.volume.0.rbd.0.secret_ref.0.namespace,null)
+          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
         }
 

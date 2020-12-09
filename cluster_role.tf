@@ -2,6 +2,43 @@ resource "kubernetes_cluster_role" "instance" {
   depends_on = [null_resource.module_depends_on]
   for_each = local.cluster_role.applications
 
+  dynamic "aggregation_rule" { # Nesting Mode: list  Max Items : 1  
+    for_each = contains(keys(each.value), "aggregationRule") ? {item = each.value["aggregationRule"]} : {}
+
+    content {
+      dynamic "cluster_role_selectors" { # Nesting Mode: list  
+        for_each = lookup(aggregation_rule.value, "clusterRoleSelectors", {})
+
+        content {
+          match_labels = lookup(cluster_role_selectors.value, "matchLabels", null)
+          # Type: ['map', 'string']   Optional  
+          # A map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of `match_expressions`, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
+
+          dynamic "match_expressions" { # Nesting Mode: list  
+            for_each = lookup(cluster_role_selectors.value, "matchExpressions", {})
+
+            content {
+              key = lookup(match_expressions.value, "key", null)
+              # Type: string   Optional  
+              # The label key that the selector applies to.
+
+              operator = lookup(match_expressions.value, "operator", null)
+              # Type: string   Optional  
+              # A key's relationship to a set of values. Valid operators ard `In`, `NotIn`, `Exists` and `DoesNotExist`.
+
+              values = lookup(match_expressions.value, "values", null)
+              # Type: ['set', 'string']   Optional  
+              # An array of string values. If the operator is `In` or `NotIn`, the values array must be non-empty. If the operator is `Exists` or `DoesNotExist`, the values array must be empty. This array is replaced during a strategic merge patch.
+
+            }
+          }
+
+        }
+      }
+
+    }
+  }
+
   dynamic "metadata" { # Nesting Mode: list  Min Items : 1  Max Items : 1  
     for_each = contains(keys(each.value), "metadata") ? {item = each.value["metadata"]} : {}
 
@@ -21,7 +58,7 @@ resource "kubernetes_cluster_role" "instance" {
     }
   }
 
-  dynamic "rule" { # Nesting Mode: list  Min Items : 1  
+  dynamic "rule" { # Nesting Mode: list  
     for_each = lookup(each.value, "rules", {})
 
     content {

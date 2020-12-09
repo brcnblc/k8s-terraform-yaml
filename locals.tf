@@ -7,6 +7,14 @@ locals {
     }
   }
 
+  certificate_signing_request = {
+    applications = {
+      for key, value in var.appConfig :
+        key => lookup(lookup(value, "k8s", {}), "certificate_signing_request", null)
+        if contains(keys(lookup(value, "k8s", {})), "certificate_signing_request") && var.module_enabled && !lookup(lookup(value, "k8s", {}), "disabled", false) && !lookup(lookup(lookup(value, "k8s", {}), "certificate_signing_request", {}), "disabled", false)
+    }
+  }
+
   cluster_role = {
     applications = {
       for key, value in var.appConfig :
@@ -39,11 +47,27 @@ locals {
     }
   }
 
+  csi_driver = {
+    applications = {
+      for key, value in var.appConfig :
+        key => lookup(lookup(value, "k8s", {}), "csi_driver", null)
+        if contains(keys(lookup(value, "k8s", {})), "csi_driver") && var.module_enabled && !lookup(lookup(value, "k8s", {}), "disabled", false) && !lookup(lookup(lookup(value, "k8s", {}), "csi_driver", {}), "disabled", false)
+    }
+  }
+
   daemonset = {
     applications = {
       for key, value in var.appConfig :
         key => lookup(lookup(value, "k8s", {}), "daemonset", null)
         if contains(keys(lookup(value, "k8s", {})), "daemonset") && var.module_enabled && !lookup(lookup(value, "k8s", {}), "disabled", false) && !lookup(lookup(lookup(value, "k8s", {}), "daemonset", {}), "disabled", false)
+    }
+  }
+
+  default_service_account = {
+    applications = {
+      for key, value in var.appConfig :
+        key => lookup(lookup(value, "k8s", {}), "default_service_account", null)
+        if contains(keys(lookup(value, "k8s", {})), "default_service_account") && var.module_enabled && !lookup(lookup(value, "k8s", {}), "disabled", false) && !lookup(lookup(lookup(value, "k8s", {}), "default_service_account", {}), "disabled", false)
     }
   }
 
@@ -148,6 +172,14 @@ locals {
       for key, value in var.appConfig :
         key => lookup(lookup(value, "k8s", {}), "pod_disruption_budget", null)
         if contains(keys(lookup(value, "k8s", {})), "pod_disruption_budget") && var.module_enabled && !lookup(lookup(value, "k8s", {}), "disabled", false) && !lookup(lookup(lookup(value, "k8s", {}), "pod_disruption_budget", {}), "disabled", false)
+    }
+  }
+
+  pod_security_policy = {
+    applications = {
+      for key, value in var.appConfig :
+        key => lookup(lookup(value, "k8s", {}), "pod_security_policy", null)
+        if contains(keys(lookup(value, "k8s", {})), "pod_security_policy") && var.module_enabled && !lookup(lookup(value, "k8s", {}), "disabled", false) && !lookup(lookup(lookup(value, "k8s", {}), "pod_security_policy", {}), "disabled", false)
     }
   }
 

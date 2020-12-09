@@ -2,6 +2,10 @@ resource "kubernetes_deployment" "instance" {
   depends_on = [null_resource.module_depends_on]
   for_each = local.deployment.applications
 
+  wait_for_rollout = lookup(each.value, "waitForRollout", null)
+  # Type: bool   Optional  
+  # Wait for the rollout of the deployment to complete. Defaults to true.
+
   dynamic "metadata" { # Nesting Mode: list  Min Items : 1  Max Items : 1  
     for_each = contains(keys(each.value), "metadata") ? {item = each.value["metadata"]} : {}
 
@@ -156,7 +160,11 @@ resource "kubernetes_deployment" "instance" {
               # Type: string   Optional  
               # Set DNS policy for containers within the pod. Valid values are 'ClusterFirstWithHostNet', 'ClusterFirst', 'Default' or 'None'. DNS parameters given in DNSConfig will be merged with the policy selected with DNSPolicy. To have DNS options set along with hostNetwork, you have to specify DNS policy explicitly to 'ClusterFirstWithHostNet'. Optional: Defaults to 'ClusterFirst', see [Kubernetes reference](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy).
 
-              host_ipc = lookup(spec.value, "hostIpc", null)
+              enable_service_links = lookup(spec.value, "enableServiceLinks", null)
+              # Type: bool   Optional  
+              # Enables generating environment variables for service discovery. Optional: Defaults to true.
+
+              host_ipc = lookup(spec.value, "hostIPC", null)
               # Type: bool   Optional  
               # Use the host's ipc namespace. Optional: Defaults to false.
 
@@ -540,6 +548,10 @@ resource "kubernetes_deployment" "instance" {
                   # Type: string   Optional  
                   # Optional: Path at which the file to which the container's termination message will be written is mounted into the container's filesystem. Message written is intended to be brief final status, such as an assertion failure message. Defaults to /dev/termination-log. Cannot be updated.
 
+                  termination_message_policy = lookup(container.value, "terminationMessagePolicy", null)
+                  # Type: string   Optional Computed 
+                  # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
                   tty = lookup(container.value, "tty", null)
                   # Type: bool   Optional  
                   # Whether this container should allocate a TTY for itself
@@ -575,6 +587,10 @@ resource "kubernetes_deployment" "instance" {
                               name = lookup(config_map_key_ref.value, "name", null)
                               # Type: string   Optional  
                               # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                              optional = lookup(config_map_key_ref.value, "optional", null)
+                              # Type: bool   Optional  
+                              # Specify whether the ConfigMap or its key must be defined.
 
                             }
                           }
@@ -619,6 +635,10 @@ resource "kubernetes_deployment" "instance" {
                               name = lookup(secret_key_ref.value, "name", null)
                               # Type: string   Optional  
                               # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                              optional = lookup(secret_key_ref.value, "optional", null)
+                              # Type: bool   Optional  
+                              # Specify whether the Secret or its key must be defined.
 
                             }
                           }
@@ -906,7 +926,7 @@ resource "kubernetes_deployment" "instance" {
                       # Type: number Required    
                       # Number of port to expose on the pod's IP address. This must be a valid port number, 0 < x < 65536.
 
-                      host_ip = lookup(port.value, "hostIp", null)
+                      host_ip = lookup(port.value, "hostIP", null)
                       # Type: string   Optional  
                       # What host IP to bind the external port to.
 
@@ -1323,6 +1343,10 @@ resource "kubernetes_deployment" "instance" {
                   # Type: string   Optional  
                   # Optional: Path at which the file to which the container's termination message will be written is mounted into the container's filesystem. Message written is intended to be brief final status, such as an assertion failure message. Defaults to /dev/termination-log. Cannot be updated.
 
+                  termination_message_policy = lookup(init_container.value, "terminationMessagePolicy", null)
+                  # Type: string   Optional Computed 
+                  # Optional: Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.
+
                   tty = lookup(init_container.value, "tty", null)
                   # Type: bool   Optional  
                   # Whether this container should allocate a TTY for itself
@@ -1358,6 +1382,10 @@ resource "kubernetes_deployment" "instance" {
                               name = lookup(config_map_key_ref.value, "name", null)
                               # Type: string   Optional  
                               # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                              optional = lookup(config_map_key_ref.value, "optional", null)
+                              # Type: bool   Optional  
+                              # Specify whether the ConfigMap or its key must be defined.
 
                             }
                           }
@@ -1402,6 +1430,10 @@ resource "kubernetes_deployment" "instance" {
                               name = lookup(secret_key_ref.value, "name", null)
                               # Type: string   Optional  
                               # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                              optional = lookup(secret_key_ref.value, "optional", null)
+                              # Type: bool   Optional  
+                              # Specify whether the Secret or its key must be defined.
 
                             }
                           }
@@ -1689,7 +1721,7 @@ resource "kubernetes_deployment" "instance" {
                       # Type: number Required    
                       # Number of port to expose on the pod's IP address. This must be a valid port number, 0 < x < 65536.
 
-                      host_ip = lookup(port.value, "hostIp", null)
+                      host_ip = lookup(port.value, "hostIP", null)
                       # Type: string   Optional  
                       # What host IP to bind the external port to.
 
@@ -2014,6 +2046,17 @@ resource "kubernetes_deployment" "instance" {
                 }
               }
 
+              dynamic "readiness_gate" { # Nesting Mode: list  
+                for_each = lookup(spec.value, "readinessGate", {})
+
+                content {
+                  condition_type = lookup(readiness_gate.value, "conditionType", null)
+                  # Type: string Required    
+                  # refers to a condition in the pod's condition list with matching type.
+
+                }
+              }
+
               dynamic "security_context" { # Nesting Mode: list  Max Items : 1  
                 for_each = contains(keys(spec.value), "securityContext") ? {item = spec.value["securityContext"]} : {}
 
@@ -2057,6 +2100,21 @@ resource "kubernetes_deployment" "instance" {
                       user = lookup(se_linux_options.value, "user", null)
                       # Type: string   Optional  
                       # User is a SELinux user label that applies to the container.
+
+                    }
+                  }
+
+                  dynamic "sysctl" { # Nesting Mode: list  
+                    for_each = lookup(security_context.value, "sysctl", {})
+
+                    content {
+                      name = lookup(sysctl.value, "name", null)
+                      # Type: string Required    
+                      # Name of a property to set.
+
+                      value = lookup(sysctl.value, "value", null)
+                      # Type: string Required    
+                      # Value of a property to set.
 
                     }
                   }
@@ -2142,6 +2200,10 @@ resource "kubernetes_deployment" "instance" {
                       # Type: string   Optional  
                       # Filesystem type to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
 
+                      kind = lookup(azure_disk.value, "kind", null)
+                      # Type: string   Optional Computed 
+                      # The type for the data disk. Expected values: Shared, Dedicated, Managed. Defaults to Shared
+
                       read_only = lookup(azure_disk.value, "readOnly", null)
                       # Type: bool   Optional  
                       # Whether to force the read-only setting in VolumeMounts. Defaults to false (read/write).
@@ -2200,6 +2262,10 @@ resource "kubernetes_deployment" "instance" {
                           # Type: string   Optional  
                           # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
+                          namespace = var.namespace != "" ? var.namespace : lookup(secret_ref.value, "namespace", null)
+                          # Type: string   Optional Computed 
+                          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
                         }
                       }
 
@@ -2237,6 +2303,10 @@ resource "kubernetes_deployment" "instance" {
                       # Type: string   Optional  
                       # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
+                      optional = lookup(config_map.value, "optional", null)
+                      # Type: bool   Optional  
+                      # Optional: Specify whether the ConfigMap or its keys must be defined.
+
                       dynamic "items" { # Nesting Mode: list  
                         for_each = lookup(config_map.value, "items", {})
 
@@ -2252,6 +2322,93 @@ resource "kubernetes_deployment" "instance" {
                           path = lookup(items.value, "path", null)
                           # Type: string   Optional  
                           # The relative path of the file to map the key to. May not be an absolute path. May not contain the path element '..'. May not start with the string '..'.
+
+                        }
+                      }
+
+                    }
+                  }
+
+                  dynamic "csi" { # Nesting Mode: list  Max Items : 1  
+                    for_each = contains(keys(volume.value), "csi") ? {item = volume.value["csi"]} : {}
+
+                    content {
+                      driver = lookup(csi.value, "driver", null)
+                      # Type: string Required    
+                      # the name of the volume driver to use. More info: https://kubernetes.io/docs/concepts/storage/volumes/#csi
+
+                      fs_type = lookup(csi.value, "fsType", null)
+                      # Type: string   Optional  
+                      # Filesystem type to mount. Must be a filesystem type supported by the host operating system. Ex. "ext4", "xfs", "ntfs". Implicitly inferred to be "ext4" if unspecified.
+
+                      read_only = lookup(csi.value, "readOnly", null)
+                      # Type: bool   Optional  
+                      # Whether to set the read-only property in VolumeMounts to "true". If omitted, the default is "false". More info: http://kubernetes.io/docs/user-guide/volumes#csi
+
+                      volume_attributes = lookup(csi.value, "volumeAttributes", null)
+                      # Type: ['map', 'string']   Optional  
+                      # Attributes of the volume to publish.
+
+                      volume_handle = lookup(csi.value, "volumeHandle", null)
+                      # Type: string Required    
+                      # A string value that uniquely identifies the volume. More info: https://kubernetes.io/docs/concepts/storage/volumes/#csi
+
+                      dynamic "controller_expand_secret_ref" { # Nesting Mode: list  Max Items : 1  
+                        for_each = contains(keys(csi.value), "controllerExpandSecretRef") ? {item = csi.value["controllerExpandSecretRef"]} : {}
+
+                        content {
+                          name = lookup(controller_expand_secret_ref.value, "name", null)
+                          # Type: string   Optional  
+                          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                          namespace = var.namespace != "" ? var.namespace : lookup(controller_expand_secret_ref.value, "namespace", null)
+                          # Type: string   Optional Computed 
+                          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                        }
+                      }
+
+                      dynamic "controller_publish_secret_ref" { # Nesting Mode: list  Max Items : 1  
+                        for_each = contains(keys(csi.value), "controllerPublishSecretRef") ? {item = csi.value["controllerPublishSecretRef"]} : {}
+
+                        content {
+                          name = lookup(controller_publish_secret_ref.value, "name", null)
+                          # Type: string   Optional  
+                          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                          namespace = var.namespace != "" ? var.namespace : lookup(controller_publish_secret_ref.value, "namespace", null)
+                          # Type: string   Optional Computed 
+                          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                        }
+                      }
+
+                      dynamic "node_publish_secret_ref" { # Nesting Mode: list  Max Items : 1  
+                        for_each = contains(keys(csi.value), "nodePublishSecretRef") ? {item = csi.value["nodePublishSecretRef"]} : {}
+
+                        content {
+                          name = lookup(node_publish_secret_ref.value, "name", null)
+                          # Type: string   Optional  
+                          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                          namespace = var.namespace != "" ? var.namespace : lookup(node_publish_secret_ref.value, "namespace", null)
+                          # Type: string   Optional Computed 
+                          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                        }
+                      }
+
+                      dynamic "node_stage_secret_ref" { # Nesting Mode: list  Max Items : 1  
+                        for_each = contains(keys(csi.value), "nodeStageSecretRef") ? {item = csi.value["nodeStageSecretRef"]} : {}
+
+                        content {
+                          name = lookup(node_stage_secret_ref.value, "name", null)
+                          # Type: string   Optional  
+                          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                          namespace = var.namespace != "" ? var.namespace : lookup(node_stage_secret_ref.value, "namespace", null)
+                          # Type: string   Optional Computed 
+                          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
                         }
                       }
@@ -2325,6 +2482,10 @@ resource "kubernetes_deployment" "instance" {
                       # Type: string   Optional  
                       # What type of storage medium should back this directory. The default is "" which means to use the node's default medium. Must be an empty string (default) or Memory. More info: http://kubernetes.io/docs/user-guide/volumes#emptydir
 
+                      size_limit = lookup(empty_dir.value, "sizeLimit", null)
+                      # Type: string   Optional  
+                      # Total amount of local storage required for this EmptyDir volume.
+
                     }
                   }
 
@@ -2377,6 +2538,10 @@ resource "kubernetes_deployment" "instance" {
                         content {
                           name = lookup(secret_ref.value, "name", null)
                           # Type: string   Optional  
+                          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                          namespace = var.namespace != "" ? var.namespace : lookup(secret_ref.value, "namespace", null)
+                          # Type: string   Optional Computed 
                           # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
                         }
@@ -2567,6 +2732,165 @@ resource "kubernetes_deployment" "instance" {
                     }
                   }
 
+                  dynamic "projected" { # Nesting Mode: list  
+                    for_each = lookup(volume.value, "projected", {})
+
+                    content {
+                      default_mode = lookup(projected.value, "defaultMode", null)
+                      # Type: string   Optional  
+                      # Optional: mode bits to use on created files by default. Must be a value between 0 and 0777. Defaults to 0644. Directories within the path are not affected by this setting. This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
+
+                      dynamic "sources" { # Nesting Mode: list  Min Items : 1  
+                        for_each = lookup(projected.value, "sources", {})
+
+                        content {
+                          dynamic "config_map" { # Nesting Mode: list  
+                            for_each = lookup(sources.value, "configMap", {})
+
+                            content {
+                              name = lookup(config_map.value, "name", null)
+                              # Type: string   Optional  
+                              # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
+                              optional = lookup(config_map.value, "optional", null)
+                              # Type: bool   Optional  
+                              # Optional: Specify whether the ConfigMap or it's keys must be defined.
+
+                              dynamic "items" { # Nesting Mode: list  
+                                for_each = lookup(config_map.value, "items", {})
+
+                                content {
+                                  key = lookup(items.value, "key", null)
+                                  # Type: string   Optional  
+                                  # The key to project.
+
+                                  mode = lookup(items.value, "mode", null)
+                                  # Type: string   Optional  
+                                  # Optional: mode bits to use on this file, must be a value between 0 and 0777. If not specified, the volume defaultMode will be used. This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
+
+                                  path = lookup(items.value, "path", null)
+                                  # Type: string   Optional  
+                                  # The relative path of the file to map the key to. May not be an absolute path. May not contain the path element '..'. May not start with the string '..'.
+
+                                }
+                              }
+
+                            }
+                          }
+
+                          dynamic "downward_api" { # Nesting Mode: list  Max Items : 1  
+                            for_each = contains(keys(sources.value), "downwardApi") ? {item = sources.value["downwardApi"]} : {}
+
+                            content {
+                              dynamic "items" { # Nesting Mode: list  
+                                for_each = lookup(downward_api.value, "items", {})
+
+                                content {
+                                  mode = lookup(items.value, "mode", null)
+                                  # Type: string   Optional  
+                                  # Mode bits to use on this file, must be a value between 0 and 0777. If not specified, the volume defaultMode will be used. This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
+
+                                  path = lookup(items.value, "path", null)
+                                  # Type: string Required    
+                                  # Path is the relative path name of the file to be created. Must not be absolute or contain the '..' path. Must be utf-8 encoded. The first item of the relative path must not start with '..'
+
+                                  dynamic "field_ref" { # Nesting Mode: list  Max Items : 1  
+                                    for_each = contains(keys(items.value), "fieldRef") ? {item = items.value["fieldRef"]} : {}
+
+                                    content {
+                                      api_version = lookup(field_ref.value, "apiVersion", null)
+                                      # Type: string   Optional  
+                                      # Version of the schema the FieldPath is written in terms of, defaults to 'v1'.
+
+                                      field_path = lookup(field_ref.value, "fieldPath", null)
+                                      # Type: string   Optional  
+                                      # Path of the field to select in the specified API version
+
+                                    }
+                                  }
+
+                                  dynamic "resource_field_ref" { # Nesting Mode: list  Max Items : 1  
+                                    for_each = contains(keys(items.value), "resourceFieldRef") ? {item = items.value["resourceFieldRef"]} : {}
+
+                                    content {
+                                      container_name = lookup(resource_field_ref.value, "containerName", null)
+                                      # Type: string Required    
+
+                                      quantity = lookup(resource_field_ref.value, "quantity", null)
+                                      # Type: string   Optional  
+
+                                      resource = lookup(resource_field_ref.value, "resource", null)
+                                      # Type: string Required    
+                                      # Resource to select
+
+                                    }
+                                  }
+
+                                }
+                              }
+
+                            }
+                          }
+
+                          dynamic "secret" { # Nesting Mode: list  
+                            for_each = lookup(sources.value, "secret", {})
+
+                            content {
+                              name = lookup(secret.value, "name", null)
+                              # Type: string   Optional  
+                              # Name of the secret in the pod's namespace to use. More info: http://kubernetes.io/docs/user-guide/volumes#secrets
+
+                              optional = lookup(secret.value, "optional", null)
+                              # Type: bool   Optional  
+                              # Optional: Specify whether the Secret or it's keys must be defined.
+
+                              dynamic "items" { # Nesting Mode: list  
+                                for_each = lookup(secret.value, "items", {})
+
+                                content {
+                                  key = lookup(items.value, "key", null)
+                                  # Type: string   Optional  
+                                  # The key to project.
+
+                                  mode = lookup(items.value, "mode", null)
+                                  # Type: string   Optional  
+                                  # Optional: mode bits to use on this file, must be a value between 0 and 0777. If not specified, the volume defaultMode will be used. This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
+
+                                  path = lookup(items.value, "path", null)
+                                  # Type: string   Optional  
+                                  # The relative path of the file to map the key to. May not be an absolute path. May not contain the path element '..'. May not start with the string '..'.
+
+                                }
+                              }
+
+                            }
+                          }
+
+                          dynamic "service_account_token" { # Nesting Mode: list  Max Items : 1  
+                            for_each = contains(keys(sources.value), "serviceAccountToken") ? {item = sources.value["serviceAccountToken"]} : {}
+
+                            content {
+                              audience = lookup(service_account_token.value, "audience", null)
+                              # Type: string   Optional  
+                              # Audience is the intended audience of the token
+
+                              expiration_seconds = lookup(service_account_token.value, "expirationSeconds", null)
+                              # Type: number   Optional  
+                              # ExpirationSeconds is the expected duration of validity of the service account token. It defaults to 1 hour and must be at least 10 minutes (600 seconds).
+
+                              path = lookup(service_account_token.value, "path", null)
+                              # Type: string Required    
+                              # Path specifies a relative path to the mount point of the projected volume.
+
+                            }
+                          }
+
+                        }
+                      }
+
+                    }
+                  }
+
                   dynamic "quobyte" { # Nesting Mode: list  Max Items : 1  
                     for_each = contains(keys(volume.value), "quobyte") ? {item = volume.value["quobyte"]} : {}
 
@@ -2634,6 +2958,10 @@ resource "kubernetes_deployment" "instance" {
                           # Type: string   Optional  
                           # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
 
+                          namespace = var.namespace != "" ? var.namespace : lookup(secret_ref.value, "namespace", null)
+                          # Type: string   Optional Computed 
+                          # Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
+
                         }
                       }
 
@@ -2650,7 +2978,7 @@ resource "kubernetes_deployment" "instance" {
 
                       optional = lookup(secret.value, "optional", null)
                       # Type: bool   Optional  
-                      # Optional: Specify whether the Secret or it's keys must be defined.
+                      # Optional: Specify whether the Secret or its keys must be defined.
 
                       secret_name = lookup(secret.value, "secretName", null)
                       # Type: string   Optional  

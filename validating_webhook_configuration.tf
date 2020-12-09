@@ -73,7 +73,7 @@ resource "kubernetes_validating_webhook_configuration" "instance" {
           # A path is optional, and if present may be any string permissible in a URL. You may use the path to pass an arbitrary string to the webhook, for example, a cluster identifier.
           # Attempting to use a user or basic auth e.g. "user:password@" is not allowed. Fragments ("#...") and query parameters ("?...") are not allowed, either.
 
-          dynamic "service" { # Nesting Mode: list  Min Items : 1  Max Items : 1  
+          dynamic "service" { # Nesting Mode: list  Max Items : 1  
             for_each = contains(keys(client_config.value), "service") ? {item = client_config.value["service"]} : {}
 
             content {
@@ -171,7 +171,7 @@ resource "kubernetes_validating_webhook_configuration" "instance" {
 
           operations = lookup(rule.value, "operations", null)
           # Type: ['list', 'string'] Required    
-          # Operations is the operations the admission hook cares about - CREATE, UPDATE, or * for all operations. If '*' is present, the length of the slice must be one. Required.
+          # Operations is the operations the admission hook cares about - CREATE, UPDATE, DELETE, CONNECT or * for all of those operations and any future admission operations that are added. If '*' is present, the length of the slice must be one. Required.
 
           resources = lookup(rule.value, "resources", null)
           # Type: ['list', 'string'] Required    
